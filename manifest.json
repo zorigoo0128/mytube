@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "MyTube",
+  "version": "0.1.0",
+  "description": "Choose the videos that appear on your YouTube home page and hide the parts of YouTube you don't want.",
+  "minimum_chrome_version": "120",
+  "permissions": ["storage"],
+  "host_permissions": ["https://www.youtube.com/*", "https://youtube.com/*"],
+  "action": {
+    "default_title": "MyTube",
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*", "https://youtube.com/*"],
+      "js": ["src/shared.js", "src/content.js"],
+      "css": ["src/content.css"],
+      "run_at": "document_start"
+    }
+  ]
+}

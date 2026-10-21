@@ -1,0 +1,515 @@
+/* ------------------------------------------------------------------ *
+ * Hand-picked home feed
+ * ------------------------------------------------------------------ */
+
+#mytube-feed {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 32px;
+  width: 100%;
+  max-width: 2400px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+  font-family: "Roboto", "Arial", sans-serif;
+  color: var(--yt-sys-color-baseline--text-primary, var(--yt-spec-text-primary, #0f0f0f));
+}
+
+#mytube-feed .mytube-card {
+  display: block;
+  min-width: 0;
+  padding: 8px;
+  margin: -8px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.15s ease;
+}
+
+@media (hover: hover) {
+  #mytube-feed .mytube-card:hover {
+    background-color: color-mix(in srgb, currentColor 10%, transparent);
+  }
+}
+
+#mytube-feed .mytube-card:focus-visible {
+  outline: 2px solid var(--yt-sys-color-baseline--call-to-action, var(--yt-spec-call-to-action, #065fd4));
+  outline-offset: 2px;
+}
+
+#mytube-feed .mytube-thumb {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: rgba(128, 128, 128, 0.22);
+}
+
+#mytube-feed .mytube-thumb-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#mytube-feed .mytube-duration {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 0.2px;
+}
+
+#mytube-feed .mytube-duration:empty {
+  display: none;
+}
+
+#mytube-feed .mytube-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+#mytube-feed .mytube-avatar {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background-color: #606060;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+#mytube-feed .mytube-avatar-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#mytube-feed .mytube-texts {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#mytube-feed .mytube-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+#mytube-feed .mytube-title:empty::before {
+  content: "";
+  display: block;
+  width: 85%;
+  height: 16px;
+  margin: 3px 0;
+  border-radius: 4px;
+  background-color: rgba(128, 128, 128, 0.22);
+  animation: mytube-pulse 1.2s ease-in-out infinite;
+}
+
+#mytube-feed .mytube-byline {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#mytube-feed .mytube-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 20px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--yt-sys-color-baseline--text-secondary, var(--yt-spec-text-secondary, #606060));
+}
+
+#mytube-feed .mytube-meta > span + span::before {
+  content: "\2022";
+  margin: 0 4px;
+}
+
+@keyframes mytube-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+html.mytube-hide-channel #mytube-feed .mytube-avatar,
+html.mytube-hide-channel #mytube-feed .mytube-byline {
+  display: none !important;
+}
+
+html.mytube-hide-channel #mytube-feed .mytube-views::before {
+  content: none !important;
+}
+
+html.mytube-hide-views #mytube-feed .mytube-date::before {
+  content: none !important;
+}
+
+html.mytube-hide-views #mytube-feed .mytube-views {
+  display: none !important;
+}
+
+html.mytube-hide-posted #mytube-feed .mytube-date {
+  display: none !important;
+}
+
+html.mytube-hide-channel.mytube-hide-views.mytube-hide-posted #mytube-feed .mytube-meta {
+  display: none !important;
+}
+
+#mytube-feed .mytube-meta > span:empty {
+  display: none;
+}
+
+/* While the custom feed is active, the algorithmic home feed is not rendered. */
+html.mytube-custom-home ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html.mytube-custom-home ytd-browse[page-subtype="home"] ytd-rich-section-renderer,
+html.mytube-custom-home ytd-browse[page-subtype="home"] ytd-feed-filter-chip-bar-renderer,
+html.mytube-custom-home ytd-browse[page-subtype="home"] ytd-continuation-item-renderer {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------ *
+ * Static top-bar changes
+ * ------------------------------------------------------------------ */
+
+/* Replace the YouTube logo with editable text. */
+html:not(.mytube-hide-topbar) ytd-masthead :is(
+  #logo,
+  ytd-topbar-logo-renderer,
+  ytd-logo,
+  #logo-icon
+) {
+  display: none !important;
+}
+
+.mytube-brand-text {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  height: 56px;
+  max-width: 320px;
+  margin-left: 16px;
+  padding: 0 4px;
+  overflow: hidden;
+  color: var(--yt-sys-color-baseline--text-primary, var(--yt-spec-text-primary, #0f0f0f));
+  font-family: "YouTube Sans", "Roboto", "Arial", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 56px;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mytube-brand-text:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid var(--yt-sys-color-baseline--call-to-action, var(--yt-spec-call-to-action, #065fd4));
+  outline-offset: 2px;
+}
+
+/* Remove the whole right-side control group: Create, Notifications, profile,
+   settings, and sign-in all live under #end. */
+html:not(.mytube-hide-topbar) ytd-masthead #end {
+  display: none !important;
+}
+
+/* Remove the voice-search microphone. */
+html:not(.mytube-hide-topbar) ytd-masthead :is(
+  #voice-search-button,
+  ytd-voice-search-button,
+  yt-voice-search-button
+) {
+  display: none !important;
+}
+
+/* Put the search box on the right and make it narrower. */
+html:not(.mytube-hide-topbar) ytd-masthead #center {
+  flex: 0 0 auto !important;
+  justify-content: flex-end !important;
+  margin-left: auto !important;
+  margin-right: 8px !important;
+  padding: 0 !important;
+}
+
+html:not(.mytube-hide-topbar) ytd-masthead #center :is(
+  yt-searchbox,
+  ytd-searchbox,
+  #search-form,
+  #searchbox
+) {
+  width: 420px !important;
+  min-width: 0 !important;
+  max-width: 420px !important;
+  box-sizing: border-box !important;
+}
+
+html:not(.mytube-hide-topbar) ytd-masthead #center yt-searchbox :is(
+  .ytSearchboxComponentInputWrapper,
+  .ytSearchboxComponentInputContainer,
+  .ytSearchboxComponentSearchForm
+) {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Remove the magnifier button from the search box. Enter still searches. */
+html:not(.mytube-hide-topbar) ytd-masthead :is(
+  #search-icon-legacy,
+  #search-button,
+  .ytSearchboxComponentSearchButton
+) {
+  display: none !important;
+}
+
+html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentInputBox {
+  border-top-right-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
+}
+
+/* ------------------------------------------------------------------ *
+ * Static watch-page layout
+ * ------------------------------------------------------------------ */
+
+/* Stack comments and the related list in one column. */
+ytd-watch-flexy #columns {
+  display: block !important;
+}
+
+ytd-watch-flexy #primary {
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 16px !important;
+  box-sizing: border-box !important;
+}
+
+ytd-watch-flexy #secondary {
+  position: static !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 24px 16px 0 !important;
+  box-sizing: border-box !important;
+}
+
+ytd-watch-flexy #secondary-inner {
+  position: static !important;
+  width: auto !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+
+#related ytd-watch-next-secondary-results-renderer {
+  width: 100% !important;
+}
+
+#related ytd-watch-next-secondary-results-renderer #items > ytd-item-section-renderer {
+  width: 100% !important;
+}
+
+#related ytd-item-section-renderer #contents {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+#related ytd-item-section-renderer #contents > * {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+/* Hide live broadcasts in the related list, but keep ordinary videos with
+   "live" somewhere in the title. */
+#related :is(
+  yt-lockup-view-model,
+  ytd-compact-video-renderer,
+  ytd-video-renderer,
+  ytd-grid-video-renderer,
+  ytd-rich-item-renderer
+):has(
+  .ytBadgeShapeThumbnailLive,
+  ytd-thumbnail-overlay-time-status-renderer[overlay-style="LIVE"],
+  .badge-style-type-live-now
+) {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------ *
+ * Switches
+ * ------------------------------------------------------------------ */
+
+/* Comments */
+html.mytube-hide-comments :is(ytd-comments, ytd-comments-header-renderer, #comments) {
+  display: none !important;
+}
+
+/* Watch-page metadata rows */
+html.mytube-hide-watch-top-row ytd-watch-metadata #top-row,
+html.mytube-hide-watch-middle-row ytd-watch-metadata #middle-row,
+html.mytube-hide-watch-bottom-row ytd-watch-metadata #bottom-row,
+html.mytube-hide-watch-bottom-row ytd-watch-metadata #buttom-row {
+  display: none !important;
+}
+
+/* Shorts */
+html.mytube-hide-shorts :is(
+  ytd-reel-shelf-renderer,
+  ytd-rich-shelf-renderer[is-shorts],
+  ytd-reel-item-renderer,
+  ytd-reel-video-renderer,
+  ytd-shorts,
+  ytm-shorts-lockup-view-model,
+  yt-shorts-lockup-view-model,
+  yt-tab-shape[tab-title="Shorts"],
+  yt-chip-cloud-chip-renderer:has(yt-formatted-string[title="Shorts"]),
+  grid-shelf-view-model:has(ytm-shorts-lockup-view-model),
+  ytd-shelf-renderer:has(ytm-shorts-lockup-view-model),
+  ytd-playlist-video-renderer:has(a[href*="/shorts/"]),
+  ytd-playlist-panel-video-renderer:has(a[href*="/shorts/"]),
+  yt-lockup-view-model:has(a[href*="/shorts/"]),
+  ytd-rich-item-renderer:has(a[href*="/shorts/"]),
+  ytd-guide-entry-renderer:has(a[title="Shorts"]),
+  ytd-guide-entry-renderer:has(a[href^="/shorts"]),
+  ytd-mini-guide-entry-renderer:has(a[title="Shorts"]),
+  ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+  yt-guide-entry-renderer:has(a[title="Shorts"]),
+  ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+  ytd-video-renderer:has(a[href*="/shorts/"]),
+  ytd-grid-video-renderer:has(a[href*="/shorts/"]),
+  ytd-compact-video-renderer:has(a[href*="/shorts/"])
+) {
+  display: none !important;
+}
+
+/* Filter chips under the search bar */
+html.mytube-hide-chips :is(
+  ytd-feed-filter-chip-bar-renderer,
+  ytd-chip-cloud-renderer,
+  yt-chip-cloud-renderer,
+  ytd-search-header-renderer,
+  #chip-bar,
+  #chips-wrapper
+) {
+  display: none !important;
+}
+
+/* Left sidebar */
+html.mytube-hide-sidebar :is(ytd-guide-renderer, #guide, ytd-mini-guide-renderer) {
+  display: none !important;
+}
+
+html.mytube-hide-sidebar ytd-app {
+  --ytd-guide-width: 0px !important;
+  --ytd-mini-guide-width: 0px !important;
+}
+
+html.mytube-hide-sidebar #page-manager,
+html.mytube-hide-sidebar #content.ytd-app {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Top bar */
+html.mytube-hide-topbar :is(ytd-masthead, #masthead-container, #masthead) {
+  display: none !important;
+}
+
+html.mytube-hide-topbar ytd-app {
+  --ytd-masthead-height: 0px !important;
+}
+
+html.mytube-hide-topbar #page-manager {
+  margin-top: 0 !important;
+  top: 0 !important;
+}
+
+/* The frosted header backdrop is sized for masthead + filter chips. */
+html.mytube-hide-topbar #frosted-glass {
+  display: none !important;
+}
+
+html.mytube-custom-home #frosted-glass,
+html.mytube-hide-chips #frosted-glass {
+  height: var(--ytd-masthead-height, 56px) !important;
+}
+
+/* Channel name and avatar on YouTube's own video cards */
+html.mytube-hide-channel
+  :is(
+    ytd-rich-item-renderer,
+    ytd-video-renderer,
+    ytd-compact-video-renderer,
+    ytd-grid-video-renderer,
+    ytd-playlist-video-renderer,
+    yt-lockup-view-model
+  )
+  :is(
+    a[href^="/@"],
+    a[href^="/channel/"],
+    a[href^="/c/"],
+    a[href^="/user/"],
+    .yt-lockup-metadata-view-model__avatar,
+    .ytLockupMetadataViewModelAvatar,
+    yt-decorated-avatar-view-model,
+    yt-avatar-shape,
+    yt-img-shadow:has(img[src*="yt3."])
+  ) {
+  display: none !important;
+}
+
+html.mytube-hide-channel :is(.mytube-tag-channel, .mytube-delim-channel) {
+  display: none !important;
+}
+
+/* Channel name and avatar on the watch page (keeps the subscribe button) */
+html.mytube-hide-channel ytd-watch-metadata #owner :is(#avatar, ytd-channel-name, #channel-name) {
+  display: none !important;
+}
+
+/* View count and posted date, tagged by content.js on YouTube's own surfaces */
+html.mytube-hide-views :is(.mytube-tag-views, .mytube-delim-views, #view-count) {
+  display: none !important;
+}
+
+html.mytube-hide-posted :is(.mytube-tag-date, .mytube-delim-date) {
+  display: none !important;
+}
+
+html.mytube-hide-posted ytd-watch-info-text #date-text {
+  display: none !important;
+}
+
+html.mytube-hide-views.mytube-hide-posted .mytube-tag-extra-row {
+  display: none !important;
+}

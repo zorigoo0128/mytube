@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="color-scheme" content="light dark" />
+    <title>MyTube</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="header">
+      <span class="brand-mark" aria-hidden="true">▶</span>
+      <div class="brand-text">
+        <h1>MyTube</h1>
+        <p>Your YouTube, on your terms.</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <div class="section-heading">
+          <h2>Your videos</h2>
+          <span id="video-count" class="count">0</span>
+        </div>
+
+        <form id="add-form" class="add-form" novalidate>
+          <label class="sr-only" for="url-input">Video links</label>
+          <textarea
+            id="url-input"
+            rows="3"
+            placeholder="Paste video links, one per line"
+            spellcheck="false"
+            autocomplete="off"
+          ></textarea>
+          <div class="add-row">
+            <p id="error" class="error" role="alert" hidden></p>
+            <button type="submit" class="btn">Add</button>
+          </div>
+        </form>
+
+        <ul id="video-list" class="video-list"></ul>
+        <p id="empty-videos" class="empty">
+          Your home page is untouched until you add a video.
+        </p>
+      </section>
+
+      <section class="section">
+        <h2>Top bar</h2>
+        <label class="field" for="brand-input">
+          <span class="field-label">Brand text</span>
+          <input
+            id="brand-input"
+            class="text-input"
+            type="text"
+            maxlength="40"
+            placeholder="MyTube"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </label>
+        <p class="field-note">Shown in place of the YouTube logo.</p>
+      </section>
+
+      <section class="section">
+        <h2>Hide on YouTube</h2>
+        <div id="toggles" class="toggles"></div>
+      </section>
+
+      <p class="footnote">Changes apply to open YouTube tabs immediately.</p>
+    </main>
+
+    <template id="video-item-template">
+      <li class="video-item">
+        <img class="video-thumb" alt="" width="64" height="36" loading="lazy" />
+        <div class="video-text">
+          <span class="video-title"></span>
+          <span class="video-url"></span>
+        </div>
+        <button type="button" class="remove" aria-label="Remove video">✕</button>
+      </li>
+    </template>
+
+    <script src="shared.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
