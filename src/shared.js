@@ -7,12 +7,23 @@
 
   var SETTINGS_KEY = 'settings';
   var META_KEY = 'meta';
+  var BACKGROUND_KEY = 'background';
   var META_VERSION = 2;
   var META_TTL_MS = 24 * 60 * 60 * 1000;
 
   var DEFAULT_SETTINGS = {
     videos: [],
     brandText: 'MyTube',
+    thumbnailRadius: 12,
+    cardSize: 272,
+    cardGap: 16,
+    fontFamily: '',
+    fontSize: 0,
+    textColor: '',
+    backgroundUrl: '',
+    backgroundDimColor: '#000000',
+    backgroundDimOpacity: 0.5,
+    cssFilter: '',
     hidden: {
       comments: false,
       shorts: false,
@@ -26,6 +37,21 @@
       'watch-middle-row': false,
       'watch-bottom-row': false
     }
+  };
+
+  var APPEARANCE_BOUNDS = {
+    thumbnailRadius: { min: 0, max: 40 },
+    cardSize: { min: 180, max: 480 },
+    cardGap: { min: 0, max: 48 },
+    fontSize: { min: 0, max: 32 },
+    backgroundDimOpacity: { min: 0, max: 1 }
+  };
+
+  var TEXT_LIMITS = {
+    fontFamily: 80,
+    textColor: 40,
+    backgroundUrl: 2048,
+    cssFilter: 200
   };
 
   var VIDEO_ID_RE = /^[A-Za-z0-9_-]{11}$/;
@@ -68,6 +94,16 @@
     var settings = {
       videos: [],
       brandText: DEFAULT_SETTINGS.brandText,
+      thumbnailRadius: DEFAULT_SETTINGS.thumbnailRadius,
+      cardSize: DEFAULT_SETTINGS.cardSize,
+      cardGap: DEFAULT_SETTINGS.cardGap,
+      fontFamily: DEFAULT_SETTINGS.fontFamily,
+      fontSize: DEFAULT_SETTINGS.fontSize,
+      textColor: DEFAULT_SETTINGS.textColor,
+      backgroundUrl: DEFAULT_SETTINGS.backgroundUrl,
+      backgroundDimColor: DEFAULT_SETTINGS.backgroundDimColor,
+      backgroundDimOpacity: DEFAULT_SETTINGS.backgroundDimOpacity,
+      cssFilter: DEFAULT_SETTINGS.cssFilter,
       hidden: Object.assign({}, DEFAULT_SETTINGS.hidden)
     };
     if (!raw || typeof raw !== 'object') return settings;
@@ -75,6 +111,24 @@
     if (typeof raw.brandText === 'string') {
       settings.brandText = raw.brandText.slice(0, 40);
     }
+
+    Object.keys(TEXT_LIMITS).forEach(function (key) {
+      if (typeof raw[key] === 'string') {
+        settings[key] = raw[key].trim().slice(0, TEXT_LIMITS[key]);
+      }
+    });
+
+    if (typeof raw.backgroundDimColor === 'string') {
+      var dimColor = raw.backgroundDimColor.trim();
+      if (/^#[0-9a-f]{6}$/i.test(dimColor)) settings.backgroundDimColor = dimColor;
+    }
+
+    Object.keys(APPEARANCE_BOUNDS).forEach(function (key) {
+      var value = raw[key];
+      if (typeof value !== 'number' || !Number.isFinite(value)) return;
+      var bounds = APPEARANCE_BOUNDS[key];
+      settings[key] = Math.min(bounds.max, Math.max(bounds.min, value));
+    });
 
     if (Array.isArray(raw.videos)) {
       for (var i = 0; i < raw.videos.length; i++) {
@@ -90,6 +144,37 @@
     }
 
     return settings;
+  }
+
+  function hexToRgba(hex, alpha) {
+    var match = typeof hex === 'string' ? /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex.trim()) : null;
+    if (!match) return '';
+
+    var value = match[1];
+    if (value.length === 3) {
+      value = value.charAt(0) + value.charAt(0) +
+        value.charAt(1) + value.charAt(1) +
+        value.charAt(2) + value.charAt(2);
+    }
+
+    var number = parseInt(value, 16);
+    var opacity = Number(alpha);
+    if (!Number.isFinite(opacity)) opacity = 1;
+    opacity = Math.min(1, Math.max(0, opacity));
+
+    return 'rgba(' + ((number >> 16) & 255) + ', ' + ((number >> 8) & 255) + ', ' + (number & 255) + ', ' + opacity + ')';
+  }
+
+  var MATH_FONT_RE = /[\uD835][\uDC00-\uDFFF]/;
+
+  /**
+   * Converts Unicode mathematical alphanumeric "font" characters to plain text.
+   * Most font families do not contain those glyphs, so the browser falls back
+   * to a math font even when a custom font-family is applied.
+   */
+  function normalizeVideoTitle(value) {
+    if (typeof value !== 'string' || !MATH_FONT_RE.test(value)) return value;
+    return value.normalize('NFKC');
   }
 
   /**
@@ -287,11 +372,14 @@
   var api = {
     SETTINGS_KEY: SETTINGS_KEY,
     META_KEY: META_KEY,
+    BACKGROUND_KEY: BACKGROUND_KEY,
     META_VERSION: META_VERSION,
     META_TTL_MS: META_TTL_MS,
     DEFAULT_SETTINGS: DEFAULT_SETTINGS,
     parseVideoId: parseVideoId,
     normalizeSettings: normalizeSettings,
+    normalizeVideoTitle: normalizeVideoTitle,
+    hexToRgba: hexToRgba,
     extractJsonAfter: extractJsonAfter,
     parseWatchPage: parseWatchPage,
     formatViews: formatViews,

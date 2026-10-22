@@ -4,9 +4,10 @@
 
 #mytube-feed {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  column-gap: 16px;
-  row-gap: 32px;
+  grid-template-columns: repeat(auto-fill, var(--mytube-card-size, 272px));
+  justify-content: center;
+  column-gap: var(--mytube-card-gap, 16px);
+  row-gap: var(--mytube-card-gap, 16px);
   width: 100%;
   max-width: 2400px;
   margin: 0 auto;
@@ -41,9 +42,15 @@
 #mytube-feed .mytube-thumb {
   position: relative;
   aspect-ratio: 16 / 9;
-  border-radius: 12px;
+  border-radius: var(--mytube-thumb-radius, 12px);
   overflow: hidden;
   background-color: rgba(128, 128, 128, 0.22);
+}
+
+/* Apply the same corner radius to YouTube's own video thumbnails. */
+:is(yt-thumbnail-view-model, ytd-thumbnail, #thumbnail) {
+  border-radius: var(--mytube-thumb-radius, 12px) !important;
+  overflow: hidden !important;
 }
 
 #mytube-feed .mytube-thumb-img {
@@ -203,6 +210,16 @@ html.mytube-custom-home ytd-browse[page-subtype="home"] ytd-continuation-item-re
  * Static top-bar changes
  * ------------------------------------------------------------------ */
 
+/* Keep the masthead and its frosted backdrop fully transparent. */
+:is(ytd-masthead, #masthead-container, #masthead, #frosted-glass, ytd-masthead #background) {
+  background: transparent !important;
+}
+
+#frosted-glass {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
 /* Replace the YouTube logo with editable text. */
 html:not(.mytube-hide-topbar) ytd-masthead :is(
   #logo,
@@ -254,7 +271,7 @@ html:not(.mytube-hide-topbar) ytd-masthead :is(
   display: none !important;
 }
 
-/* Put the search box on the right and make it narrower. */
+/* Put the search box on the right at half its previous width. */
 html:not(.mytube-hide-topbar) ytd-masthead #center {
   flex: 0 0 auto !important;
   justify-content: flex-end !important;
@@ -269,9 +286,9 @@ html:not(.mytube-hide-topbar) ytd-masthead #center :is(
   #search-form,
   #searchbox
 ) {
-  width: 420px !important;
+  width: 210px !important;
   min-width: 0 !important;
-  max-width: 420px !important;
+  max-width: 210px !important;
   box-sizing: border-box !important;
 }
 
@@ -293,9 +310,102 @@ html:not(.mytube-hide-topbar) ytd-masthead :is(
   display: none !important;
 }
 
-html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentInputBox {
-  border-top-right-radius: 20px !important;
-  border-bottom-right-radius: 20px !important;
+/* The search field is borderless and completely transparent, including
+   hover and focus states. */
+html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox :is(
+  .ytSearchboxComponentInputBox,
+  .ytSearchboxComponentInputBoxDark,
+  .ytSearchboxComponentInputBox:hover,
+  .ytSearchboxComponentInputBox:focus-within,
+  .ytSearchboxComponentInputBoxHasFocus
+) {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin-left: 0 !important;
+  padding: 0 8px 0 12px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentInput {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* The focus magnifier lives inside the form. Keep it on the left and move the
+   input text past it instead of letting the icon sit over the placeholder. The
+   input keeps its full clickable width. */
+html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentSearchForm:has(.ytSearchboxComponentInnerSearchIcon) .ytSearchboxComponentInput {
+  padding-left: 32px !important;
+}
+
+html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentInnerSearchIcon {
+  pointer-events: none !important;
+}
+
+html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentSearchForm .ytSearchboxComponentInput {
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* ------------------------------------------------------------------ *
+ * Global style
+ * ------------------------------------------------------------------ */
+
+html.mytube-custom-font,
+html.mytube-custom-font * {
+  font-family: var(--mytube-font-family) !important;
+}
+
+html.mytube-custom-font-size,
+html.mytube-custom-font-size * {
+  font-size: var(--mytube-font-size) !important;
+}
+
+html.mytube-custom-text-color,
+html.mytube-custom-text-color * {
+  color: var(--mytube-text-color) !important;
+}
+
+html.mytube-has-filter body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-color: transparent;
+  -webkit-backdrop-filter: var(--mytube-css-filter);
+  backdrop-filter: var(--mytube-css-filter);
+}
+
+html.mytube-has-background {
+  background-color: #000 !important;
+  background-image:
+    linear-gradient(var(--mytube-bg-dim, rgba(0, 0, 0, 0.5)), var(--mytube-bg-dim, rgba(0, 0, 0, 0.5))),
+    var(--mytube-bg-image, none) !important;
+  background-position: center, center !important;
+  background-size: cover, cover !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-attachment: fixed, fixed !important;
+}
+
+html.mytube-has-background body {
+  background: transparent !important;
+}
+
+html.mytube-has-background ytd-app,
+html.mytube-has-background #content.ytd-app,
+html.mytube-has-background #page-manager,
+html.mytube-has-background #primary,
+html.mytube-has-background #secondary,
+html.mytube-has-background :is(ytd-browse, ytd-watch-flexy, ytd-search, ytd-channel-renderer) {
+  background-color: transparent !important;
 }
 
 /* ------------------------------------------------------------------ *
@@ -339,14 +449,38 @@ ytd-watch-flexy #secondary-inner {
 
 #related ytd-item-section-renderer #contents {
   display: grid !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  gap: 16px !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: var(--mytube-card-gap, 16px) !important;
 }
 
 #related ytd-item-section-renderer #contents > * {
   width: 100% !important;
   min-width: 0 !important;
   margin: 0 !important;
+}
+
+/* Full-page dim on watch pages. Four fixed panes surround the player, so the
+   player stays visible and interactive while everything else is dimmed. */
+.mytube-watch-dim {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  pointer-events: none;
+}
+
+.mytube-watch-dim-pane {
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.36);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.mytube-watch-dim:focus-visible .mytube-watch-dim-pane {
+  outline: 2px solid var(--yt-sys-color-baseline--call-to-action, var(--yt-spec-call-to-action, #065fd4));
+  outline-offset: -4px;
 }
 
 /* Hide live broadcasts in the related list, but keep ordinary videos with
@@ -426,6 +560,10 @@ html.mytube-hide-chips :is(
 
 /* Left sidebar */
 html.mytube-hide-sidebar :is(ytd-guide-renderer, #guide, ytd-mini-guide-renderer) {
+  display: none !important;
+}
+
+html.mytube-hide-sidebar ytd-masthead #guide-button {
   display: none !important;
 }
 

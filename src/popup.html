@@ -16,54 +16,211 @@
     </header>
 
     <main>
-      <section class="section">
-        <div class="section-heading">
+      <details class="section">
+        <summary class="section-heading">
           <h2>Your videos</h2>
           <span id="video-count" class="count">0</span>
+        </summary>
+
+        <div class="section-body">
+          <form id="add-form" class="add-form" novalidate>
+            <label class="sr-only" for="url-input">Video links</label>
+            <textarea
+              id="url-input"
+              rows="3"
+              placeholder="Paste video links, one per line"
+              spellcheck="false"
+              autocomplete="off"
+            ></textarea>
+            <div class="add-row">
+              <p id="error" class="error" role="alert" hidden></p>
+              <button type="submit" class="btn">Add</button>
+            </div>
+          </form>
+
+          <ul id="video-list" class="video-list"></ul>
+          <p id="empty-videos" class="empty">
+            Your home page is untouched until you add a video.
+          </p>
         </div>
+      </details>
 
-        <form id="add-form" class="add-form" novalidate>
-          <label class="sr-only" for="url-input">Video links</label>
-          <textarea
-            id="url-input"
-            rows="3"
-            placeholder="Paste video links, one per line"
-            spellcheck="false"
-            autocomplete="off"
-          ></textarea>
-          <div class="add-row">
-            <p id="error" class="error" role="alert" hidden></p>
-            <button type="submit" class="btn">Add</button>
+      <details class="section">
+        <summary class="section-heading">
+          <h2>Layout</h2>
+        </summary>
+
+        <div class="section-body">
+          <h3 class="group-title">Top bar</h3>
+          <label class="field" for="brand-input">
+            <span class="field-label">Brand text</span>
+            <input
+              id="brand-input"
+              class="text-input"
+              type="text"
+              maxlength="40"
+              placeholder="MyTube"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </label>
+          <p class="field-note">Shown in place of the YouTube logo.</p>
+
+          <h3 class="group-title">Cards</h3>
+          <div class="field-group">
+            <label class="field" for="thumbnail-radius-input">
+              <span class="field-label">Thumbnail corner radius (px)</span>
+              <input
+                id="thumbnail-radius-input"
+                class="text-input"
+                type="number"
+                min="0"
+                max="40"
+                step="0.5"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="field" for="card-size-input">
+              <span class="field-label">Video card width (px)</span>
+              <input
+                id="card-size-input"
+                class="text-input"
+                type="number"
+                min="180"
+                max="480"
+                step="0.5"
+                inputmode="decimal"
+              />
+            </label>
+            <label class="field" for="card-gap-input">
+              <span class="field-label">Gap between cards (px)</span>
+              <input
+                id="card-gap-input"
+                class="text-input"
+                type="number"
+                min="0"
+                max="48"
+                step="0.5"
+                inputmode="decimal"
+              />
+            </label>
           </div>
-        </form>
+          <p class="field-note">Corner radius applies to all thumbnails. Width sets the home column width; gap applies to MyTube’s grids.</p>
+        </div>
+      </details>
 
-        <ul id="video-list" class="video-list"></ul>
-        <p id="empty-videos" class="empty">
-          Your home page is untouched until you add a video.
-        </p>
-      </section>
+      <details class="section">
+        <summary class="section-heading">
+          <h2>Theme</h2>
+        </summary>
 
-      <section class="section">
-        <h2>Top bar</h2>
-        <label class="field" for="brand-input">
-          <span class="field-label">Brand text</span>
-          <input
-            id="brand-input"
-            class="text-input"
-            type="text"
-            maxlength="40"
-            placeholder="MyTube"
-            autocomplete="off"
-            spellcheck="false"
-          />
-        </label>
-        <p class="field-note">Shown in place of the YouTube logo.</p>
-      </section>
+        <div class="section-body">
+          <h3 class="group-title">Typography</h3>
+          <div class="field-group">
+            <label class="field" for="font-family-input">
+              <span class="field-label">Font family</span>
+              <select id="font-family-input" class="text-input font-select">
+                <option value="">YouTube default</option>
+              </select>
+            </label>
+            <p class="field-note">Choose an installed font. YouTube default keeps YouTube’s fonts.</p>
+            <label class="field" for="font-size-input">
+              <span class="field-label">Font size (px)</span>
+              <input
+                id="font-size-input"
+                class="text-input"
+                type="number"
+                min="0"
+                max="32"
+                step="0.5"
+                inputmode="decimal"
+              />
+            </label>
+            <p class="field-note">0 keeps YouTube’s own text sizes.</p>
+            <label class="field" for="text-color-input">
+              <span class="field-label">Text color</span>
+              <input
+                id="text-color-input"
+                class="text-input"
+                type="text"
+                maxlength="40"
+                placeholder="YouTube default"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </label>
+            <p class="field-note">Any CSS color, such as <code>#fff</code> or <code>white</code>. Leave blank for YouTube’s colors.</p>
+          </div>
 
-      <section class="section">
-        <h2>Hide on YouTube</h2>
-        <div id="toggles" class="toggles"></div>
-      </section>
+          <h3 class="group-title">Background</h3>
+          <div class="field-group">
+            <label class="field" for="background-url-input">
+              <span class="field-label">Background image URL</span>
+              <input
+                id="background-url-input"
+                class="text-input"
+                type="url"
+                maxlength="2048"
+                placeholder="https://example.com/photo.jpg"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </label>
+            <label class="field" for="background-file-input">
+              <span class="field-label">Or choose a local image</span>
+              <input id="background-file-input" class="text-input file-input" type="file" accept="image/*" />
+            </label>
+            <p id="background-status" class="field-note" role="status">No background image.</p>
+            <p class="field-note">Chrome blocks <code>file://</code> paths on YouTube. Local images are read by the picker and stored inside the extension.</p>
+            <div class="inline-fields">
+              <label class="field" for="background-dim-color-input">
+                <span class="field-label">Dim color</span>
+                <input id="background-dim-color-input" class="color-input" type="color" value="#000000" />
+              </label>
+              <label class="field" for="background-dim-opacity-input">
+                <span class="field-label">Dim opacity</span>
+                <input
+                  id="background-dim-opacity-input"
+                  class="text-input"
+                  type="number"
+                  min="0"
+                  max="1"
+                  step="0.05"
+                  inputmode="decimal"
+                />
+              </label>
+            </div>
+            <button id="background-remove" type="button" class="btn secondary">Remove background</button>
+          </div>
+
+          <h3 class="group-title">Filter</h3>
+          <div class="field-group">
+            <label class="field" for="css-filter-input">
+              <span class="field-label">CSS filter</span>
+              <input
+                id="css-filter-input"
+                class="text-input"
+                type="text"
+                maxlength="200"
+                placeholder="grayscale(100%)"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </label>
+            <p class="field-note">Applied to the whole page through a click-through overlay: text, panels, thumbnails, and the background.</p>
+          </div>
+        </div>
+      </details>
+
+      <details class="section">
+        <summary class="section-heading">
+          <h2>Hide on YouTube</h2>
+        </summary>
+
+        <div class="section-body">
+          <div id="toggles" class="toggles"></div>
+        </div>
+      </details>
 
       <p class="footnote">Changes apply to open YouTube tabs immediately.</p>
     </main>

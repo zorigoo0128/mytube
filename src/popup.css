@@ -97,7 +97,7 @@ main {
 }
 
 .section {
-  padding: 14px 0;
+  padding: 0;
   border-bottom: 1px solid var(--border);
 }
 
@@ -108,8 +108,54 @@ main {
 .section-heading {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin: 0;
+  padding: 14px 0;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.section-heading::-webkit-details-marker {
+  display: none;
+}
+
+.section-heading:hover h2 {
+  color: var(--text);
+}
+
+.section-heading:focus-visible {
+  border-radius: 6px;
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.section[open] > .section-heading {
+  padding-bottom: 10px;
+}
+
+.section-heading::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid var(--muted);
+  border-bottom: 1.5px solid var(--muted);
+  transform: rotate(45deg);
+  transition: transform 0.15s ease;
+}
+
+.section[open] > .section-heading::after {
+  transform: rotate(-135deg);
+}
+
+.section-body {
+  padding-bottom: 14px;
+}
+
+.section-heading h2 {
+  flex: 1;
+  min-width: 0;
 }
 
 h2 {
@@ -119,6 +165,16 @@ h2 {
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.group-title {
+  margin: 18px 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.group-title:first-child {
+  margin-top: 0;
 }
 
 .count {
@@ -143,6 +199,16 @@ h2 {
   gap: 6px;
 }
 
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field-group + .field-group {
+  margin-top: 14px;
+}
+
 .field-label {
   font-size: 13px;
 }
@@ -151,6 +217,7 @@ h2 {
   margin: 6px 0 0;
   color: var(--muted);
   font-size: 11px;
+  overflow-wrap: anywhere;
 }
 
 .text-input {
@@ -168,6 +235,46 @@ h2 {
   outline: 2px solid var(--focus);
   outline-offset: 1px;
   border-color: transparent;
+}
+
+.font-select {
+  cursor: pointer;
+}
+
+.file-input {
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.color-input {
+  width: 100%;
+  height: 36px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.color-input:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.inline-fields {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.inline-fields .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.status-error {
+  color: var(--brand);
 }
 
 textarea {
@@ -227,6 +334,24 @@ textarea:focus-visible {
 .btn:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
+}
+
+.btn.secondary {
+  margin-left: 0;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.btn.secondary:hover {
+  background: var(--surface-hover);
+  opacity: 1;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .video-list {

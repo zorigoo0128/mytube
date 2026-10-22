@@ -76,6 +76,103 @@ test('normalizeSettings keeps an editable, bounded brand text', () => {
   assert.equal(M.normalizeSettings({ brandText: 'x'.repeat(80) }).brandText.length, 40);
 });
 
+test('normalizeSettings fills appearance defaults', () => {
+  const settings = M.normalizeSettings({});
+  assert.equal(settings.thumbnailRadius, 12);
+  assert.equal(settings.cardSize, 272);
+  assert.equal(settings.cardGap, 16);
+});
+
+test('normalizeSettings keeps float appearance values within bounds', () => {
+  const settings = M.normalizeSettings({
+    thumbnailRadius: 10.5,
+    cardSize: 300.5,
+    cardGap: 20.5
+  });
+
+  assert.equal(settings.thumbnailRadius, 10.5);
+  assert.equal(settings.cardSize, 300.5);
+  assert.equal(settings.cardGap, 20.5);
+});
+
+test('normalizeSettings clamps and rejects broken appearance values', () => {
+  assert.equal(M.normalizeSettings({ thumbnailRadius: -1 }).thumbnailRadius, 0);
+  assert.equal(M.normalizeSettings({ thumbnailRadius: 99 }).thumbnailRadius, 40);
+  assert.equal(M.normalizeSettings({ cardSize: 1 }).cardSize, 180);
+  assert.equal(M.normalizeSettings({ cardSize: 999 }).cardSize, 480);
+  assert.equal(M.normalizeSettings({ cardGap: -5 }).cardGap, 0);
+  assert.equal(M.normalizeSettings({ cardGap: 100 }).cardGap, 48);
+  assert.equal(M.normalizeSettings({ thumbnailRadius: '10' }).thumbnailRadius, 12);
+  assert.equal(M.normalizeSettings({ cardSize: null }).cardSize, 272);
+  assert.equal(M.normalizeSettings({ cardGap: NaN }).cardGap, 16);
+});
+
+test('normalizeSettings fills global style defaults', () => {
+  const settings = M.normalizeSettings({});
+  assert.equal(settings.fontFamily, '');
+  assert.equal(settings.fontSize, 0);
+  assert.equal(settings.textColor, '');
+  assert.equal(settings.backgroundUrl, '');
+  assert.equal(settings.backgroundDimColor, '#000000');
+  assert.equal(settings.backgroundDimOpacity, 0.5);
+  assert.equal(settings.cssFilter, '');
+});
+
+test('normalizeSettings keeps bounded global style values', () => {
+  const settings = M.normalizeSettings({
+    fontFamily: ' Arial ',
+    fontSize: 18.5,
+    textColor: ' #fff ',
+    backgroundUrl: ' https://example.com/photo.jpg ',
+    backgroundDimColor: '#112233',
+    backgroundDimOpacity: 0.8,
+    cssFilter: ' grayscale(100%) '
+  });
+
+  assert.equal(settings.fontFamily, 'Arial');
+  assert.equal(settings.fontSize, 18.5);
+  assert.equal(settings.textColor, '#fff');
+  assert.equal(settings.backgroundUrl, 'https://example.com/photo.jpg');
+  assert.equal(settings.backgroundDimColor, '#112233');
+  assert.equal(settings.backgroundDimOpacity, 0.8);
+  assert.equal(settings.cssFilter, 'grayscale(100%)');
+});
+
+test('normalizeSettings clamps and rejects broken global style values', () => {
+  assert.equal(M.normalizeSettings({ fontSize: -1 }).fontSize, 0);
+  assert.equal(M.normalizeSettings({ fontSize: 99 }).fontSize, 32);
+  assert.equal(M.normalizeSettings({ fontSize: '18' }).fontSize, 0);
+  assert.equal(M.normalizeSettings({ backgroundDimOpacity: -1 }).backgroundDimOpacity, 0);
+  assert.equal(M.normalizeSettings({ backgroundDimOpacity: 2 }).backgroundDimOpacity, 1);
+  assert.equal(M.normalizeSettings({ backgroundDimColor: 'red' }).backgroundDimColor, '#000000');
+  assert.equal(M.normalizeSettings({ fontFamily: 'x'.repeat(200) }).fontFamily.length, 80);
+  assert.equal(M.normalizeSettings({ cssFilter: 'x'.repeat(300) }).cssFilter.length, 200);
+  assert.equal(M.normalizeSettings({ backgroundUrl: 'x'.repeat(3000) }).backgroundUrl.length, 2048);
+});
+
+test('hexToRgba converts hex colors and clamps alpha', () => {
+  assert.equal(M.hexToRgba('#000000', 0.8), 'rgba(0, 0, 0, 0.8)');
+  assert.equal(M.hexToRgba('#fff', 0.5), 'rgba(255, 255, 255, 0.5)');
+  assert.equal(M.hexToRgba('#1a2b3c', 2), 'rgba(26, 43, 60, 1)');
+  assert.equal(M.hexToRgba('#1a2b3c', -1), 'rgba(26, 43, 60, 0)');
+  assert.equal(M.hexToRgba('not-a-color', 0.5), '');
+});
+
+test('normalizeVideoTitle converts mathematical font text to plain text', () => {
+  assert.equal(
+    M.normalizeVideoTitle('𝐘𝐨𝐮 𝐚𝐫𝐞 𝐜𝐫𝐞𝐚𝐭𝐢𝐧𝐠 𝐚 𝐬𝐲𝐦𝐛𝐨𝐥'),
+    'You are creating a symbol'
+  );
+  assert.equal(M.normalizeVideoTitle('𝐀𝐁𝐂 𝟏𝟐𝟑'), 'ABC 123');
+});
+
+test('normalizeVideoTitle leaves ordinary text untouched', () => {
+  assert.equal(M.normalizeVideoTitle('The Dark Knight — 日本語 🎵'), 'The Dark Knight — 日本語 🎵');
+  assert.equal(M.normalizeVideoTitle(''), '');
+  assert.equal(M.normalizeVideoTitle(null), null);
+  assert.equal(M.normalizeVideoTitle(42), 42);
+});
+
 test('extractJsonAfter handles braces and escapes inside strings', () => {
   const source = `noise; var ytInitialPlayerResponse = {"a":"brace } inside","b":{"c":"quote \\" here"}}; after`;
   assert.deepEqual(M.extractJsonAfter(source, 'ytInitialPlayerResponse'), {

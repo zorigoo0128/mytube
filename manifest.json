@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Choose the videos that appear on your YouTube home page and hide the parts of YouTube you don't want.",
   "minimum_chrome_version": "120",
-  "permissions": ["storage"],
+  "permissions": ["storage", "fontSettings"],
   "host_permissions": ["https://www.youtube.com/*", "https://youtube.com/*"],
   "action": {
     "default_title": "MyTube",
