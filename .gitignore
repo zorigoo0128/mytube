@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.swp
+
+# Node (tests only; there is no bundler)
+node_modules/
+npm-debug.log*
+*.log
+
+# Environment / secrets
+.env
+.env.*
+
+# Build / packaging output
+dist/
+*.zip
+*.crx
+*.pem
