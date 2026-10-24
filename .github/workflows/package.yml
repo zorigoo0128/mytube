@@ -1,0 +1,42 @@
+name: Package Chrome Extension
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers whenever you push a tag starting with v (e.g., v1.0.0)
+
+jobs:
+  build-and-zip:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout your repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. (Optional) Install dependencies and build if you use React, TypeScript, or a bundler like Webpack/Vite
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies & build
+        run: |
+          npm ci
+          npm run build  # Change this to whatever your build script is (or remove if plain HTML/JS)
+
+      # 3. Create the ZIP file
+      # Make sure manifest.json is at the root of the zip file!
+      - name: Zip extension
+        run: |
+          # If you use a build folder like 'dist' or 'build', zip the contents of that folder.
+          # If your files are in the root directory, zip them directly, excluding git files.
+          zip -r chrome-extension.zip . -x "*.git*" ".github/*" "node_modules/*"
+
+      # 4. Upload the zip as a GitHub Release artifact
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: chrome-extension.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
