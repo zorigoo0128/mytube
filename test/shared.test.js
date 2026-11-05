@@ -334,3 +334,48 @@ test('avatar helpers are stable and safe', () => {
   assert.equal(M.avatarHue('Casey'), M.avatarHue('Casey'));
   assert.ok(M.avatarHue('Casey') >= 0 && M.avatarHue('Casey') < 360);
 });
+
+test('normalizeBackup accepts an exported backup and normalizes it', () => {
+  const backup = M.normalizeBackup({
+    format: 'mytube-backup',
+    version: 1,
+    sync: {
+      settings: {
+        videos: [ID],
+        brandText: 'Mine',
+        hidden: { comments: true }
+      }
+    },
+    local: {
+      meta: {
+        [ID]: { title: 'A video', thumb: 'https://i.ytimg.com/vi/x/hq.jpg' },
+        notavideo: { title: 'nope' }
+      },
+      background: { dataUrl: 'data:image/webp;base64,abc', name: 'bg.webp', at: 42 }
+    }
+  });
+
+  assert.deepEqual(backup.settings.videos, [ID]);
+  assert.equal(backup.settings.brandText, 'Mine');
+  assert.equal(backup.settings.hidden.comments, true);
+  assert.deepEqual(Object.keys(backup.meta), [ID]);
+  assert.equal(backup.background.name, 'bg.webp');
+  assert.equal(backup.background.at, 42);
+});
+
+test('normalizeBackup rejects unrelated JSON', () => {
+  for (const input of [null, 'nope', 42, [], {}, { settings: { videos: [ID] } }]) {
+    assert.equal(M.normalizeBackup(input), null, JSON.stringify(input));
+  }
+});
+
+test('normalizeBackup drops malformed local data and keeps defaults', () => {
+  const backup = M.normalizeBackup({
+    sync: {},
+    local: { meta: 'bad', background: { dataUrl: 'file:///tmp/x.png' } }
+  });
+
+  assert.deepEqual(backup.settings.videos, []);
+  assert.equal(backup.meta, null);
+  assert.equal(backup.background, null);
+});

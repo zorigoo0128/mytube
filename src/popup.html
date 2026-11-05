@@ -16,7 +16,9 @@
     </header>
 
     <main>
-      <details class="section">
+      <p id="page-note" class="page-note" hidden>Full-page view. Firefox/Zen closes the toolbar popup when a file or color dialog opens, so open that control again here.</p>
+
+      <details class="section" id="section-videos">
         <summary class="section-heading">
           <h2>Your videos</h2>
           <span id="video-count" class="count">0</span>
@@ -45,7 +47,7 @@
         </div>
       </details>
 
-      <details class="section">
+      <details class="section" id="section-layout">
         <summary class="section-heading">
           <h2>Layout</h2>
         </summary>
@@ -109,7 +111,7 @@
         </div>
       </details>
 
-      <details class="section">
+      <details class="section" id="section-theme">
         <summary class="section-heading">
           <h2>Theme</h2>
         </summary>
@@ -119,11 +121,19 @@
           <div class="field-group">
             <label class="field" for="font-family-input">
               <span class="field-label">Font family</span>
-              <select id="font-family-input" class="text-input font-select">
-                <option value="">YouTube default</option>
-              </select>
+              <input
+                id="font-family-input"
+                class="text-input"
+                type="text"
+                list="font-family-options"
+                maxlength="80"
+                placeholder="YouTube default"
+                autocomplete="off"
+                spellcheck="false"
+              />
             </label>
-            <p class="field-note">Choose an installed font. YouTube default keeps YouTube’s fonts.</p>
+            <datalist id="font-family-options"></datalist>
+            <p class="field-note">Choose an installed font or type any font family name. Leave blank for YouTube’s fonts.</p>
             <label class="field" for="font-size-input">
               <span class="field-label">Font size (px)</span>
               <input
@@ -171,7 +181,7 @@
               <input id="background-file-input" class="text-input file-input" type="file" accept="image/*" />
             </label>
             <p id="background-status" class="field-note" role="status">No background image.</p>
-            <p class="field-note">Chrome blocks <code>file://</code> paths on YouTube. Local images are read by the picker and stored inside the extension.</p>
+            <p class="field-note">Browsers block <code>file://</code> paths on YouTube. Local images are read by the picker and stored inside the extension.</p>
             <div class="inline-fields">
               <label class="field" for="background-dim-color-input">
                 <span class="field-label">Dim color</span>
@@ -212,13 +222,29 @@
         </div>
       </details>
 
-      <details class="section">
+      <details class="section" id="section-hide">
         <summary class="section-heading">
           <h2>Hide on YouTube</h2>
         </summary>
 
         <div class="section-body">
           <div id="toggles" class="toggles"></div>
+        </div>
+      </details>
+
+      <details class="section" id="section-data">
+        <summary class="section-heading">
+          <h2>Data</h2>
+        </summary>
+
+        <div class="section-body">
+          <p class="field-note">Back up or move your video list, switches, theme, metadata cache, and background image. Export in the browser you are leaving, then import the file in the other browser.</p>
+          <div class="data-actions">
+            <button id="export-data" type="button" class="btn secondary">Export data</button>
+            <button id="import-data" type="button" class="btn secondary">Import data</button>
+          </div>
+          <input id="import-file-input" type="file" accept="application/json,.json" hidden />
+          <p id="data-status" class="field-note" role="status"></p>
         </div>
       </details>
 
@@ -236,6 +262,7 @@
       </li>
     </template>
 
+    <script src="browser.js"></script>
     <script src="shared.js"></script>
     <script src="popup.js"></script>
   </body>

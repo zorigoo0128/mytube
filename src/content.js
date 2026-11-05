@@ -3,6 +3,7 @@
   'use strict';
 
   var M = globalThis.MyTube;
+  var B = globalThis.MyTubeBrowser || globalThis.chrome;
   if (!M) return;
 
   var state = {
@@ -51,10 +52,10 @@
 
   async function boot() {
     var [sync, local] = await Promise.all([
-      chrome.storage.sync.get(M.SETTINGS_KEY).catch(function () {
+      B.storage.sync.get(M.SETTINGS_KEY).catch(function () {
         return {};
       }),
-      chrome.storage.local.get([M.META_KEY, M.BACKGROUND_KEY]).catch(function () {
+      B.storage.local.get([M.META_KEY, M.BACKGROUND_KEY]).catch(function () {
         return {};
       })
     ]);
@@ -72,7 +73,7 @@
   }
 
   function watchForChanges() {
-    chrome.storage.onChanged.addListener(function (changes, area) {
+    B.storage.onChanged.addListener(function (changes, area) {
       if (area === 'sync' && changes[M.SETTINGS_KEY]) {
         state.settings = M.normalizeSettings(changes[M.SETTINGS_KEY].newValue);
         applySettings();
@@ -671,7 +672,7 @@
   function scheduleMetaSave() {
     clearTimeout(metaSaveTimer);
     metaSaveTimer = setTimeout(function () {
-      chrome.storage.local.set({ [M.META_KEY]: state.meta }).catch(function () {});
+      B.storage.local.set({ [M.META_KEY]: state.meta }).catch(function () {});
     }, 400);
   }
 

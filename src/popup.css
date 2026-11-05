@@ -40,6 +40,8 @@ body {
   max-height: 580px;
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
   background: var(--bg);
   color: var(--text);
   font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
@@ -220,6 +222,15 @@ h2 {
   overflow-wrap: anywhere;
 }
 
+.page-note {
+  margin: 12px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 11px;
+}
+
 .text-input {
   width: 100%;
   padding: 8px 10px;
@@ -235,10 +246,6 @@ h2 {
   outline: 2px solid var(--focus);
   outline-offset: 1px;
   border-color: transparent;
-}
-
-.font-select {
-  cursor: pointer;
 }
 
 .file-input {
@@ -266,6 +273,13 @@ h2 {
   display: flex;
   align-items: flex-end;
   gap: 10px;
+}
+
+.data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .inline-fields .field {
@@ -520,4 +534,22 @@ textarea:focus-visible {
   color: var(--muted);
   font-size: 11px;
   text-align: center;
+}
+
+/* The same page opened in a normal tab, where file and color dialogs work. */
+body.tab-view {
+  width: auto;
+  max-height: none;
+  overflow: visible;
+}
+
+body.tab-view .header,
+body.tab-view main {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body.tab-view .header {
+  padding-top: 24px;
 }

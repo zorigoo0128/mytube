@@ -146,6 +146,53 @@
     return settings;
   }
 
+  /**
+   * Validates a backup produced by the popup's export command. Accepts only
+   * the `sync` / `local` shape written by MyTube and normalizes the settings,
+   * metadata cache, and background image.
+   */
+  function normalizeBackup(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+
+    var sync = raw.sync && typeof raw.sync === 'object' && !Array.isArray(raw.sync) ? raw.sync : null;
+    var local = raw.local && typeof raw.local === 'object' && !Array.isArray(raw.local) ? raw.local : null;
+    if (!sync && !local) return null;
+
+    var backup = {
+      settings: normalizeSettings(sync && sync[SETTINGS_KEY]),
+      meta: null,
+      background: null
+    };
+
+    var meta = local && local[META_KEY];
+    if (meta && typeof meta === 'object' && !Array.isArray(meta)) {
+      backup.meta = {};
+      Object.keys(meta).forEach(function (id) {
+        if (!VIDEO_ID_RE.test(id)) return;
+        var entry = meta[id];
+        if (entry && typeof entry === 'object' && !Array.isArray(entry)) {
+          backup.meta[id] = entry;
+        }
+      });
+    }
+
+    var background = local && local[BACKGROUND_KEY];
+    if (
+      background &&
+      typeof background === 'object' &&
+      typeof background.dataUrl === 'string' &&
+      /^data:image\//.test(background.dataUrl)
+    ) {
+      backup.background = {
+        dataUrl: background.dataUrl,
+        name: typeof background.name === 'string' ? background.name.slice(0, 200) : '',
+        at: typeof background.at === 'number' && Number.isFinite(background.at) ? background.at : Date.now()
+      };
+    }
+
+    return backup;
+  }
+
   function hexToRgba(hex, alpha) {
     var match = typeof hex === 'string' ? /^#?([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex.trim()) : null;
     if (!match) return '';
@@ -378,6 +425,7 @@
     DEFAULT_SETTINGS: DEFAULT_SETTINGS,
     parseVideoId: parseVideoId,
     normalizeSettings: normalizeSettings,
+    normalizeBackup: normalizeBackup,
     normalizeVideoTitle: normalizeVideoTitle,
     hexToRgba: hexToRgba,
     extractJsonAfter: extractJsonAfter,

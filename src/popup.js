@@ -2,6 +2,7 @@
   'use strict';
 
   var M = globalThis.MyTube;
+  var B = globalThis.MyTubeBrowser || globalThis.chrome;
   var state = {
     settings: M.normalizeSettings(null),
     meta: {},
@@ -80,17 +81,39 @@
   var countNode = document.getElementById('video-count');
   var togglesNode = document.getElementById('toggles');
   var template = document.getElementById('video-item-template');
+  var exportDataButton = document.getElementById('export-data');
+  var importDataButton = document.getElementById('import-data');
+  var importFileInput = document.getElementById('import-file-input');
+  var dataStatus = document.getElementById('data-status');
+  var backgroundDimColorInput = document.getElementById('background-dim-color-input');
+  var pageNote = document.getElementById('page-note');
+  var runningInTab = false;
+
+  var SECTION_BY_HASH = {
+    videos: 'section-videos',
+    layout: 'section-layout',
+    theme: 'section-theme',
+    hide: 'section-hide',
+    data: 'section-data'
+  };
 
   boot();
 
   async function boot() {
+    runningInTab = await detectTab();
+    if (runningInTab) {
+      document.body.classList.add('tab-view');
+      pageNote.hidden = false;
+    }
+    applyHash();
+
     buildToggles();
 
     var [sync, local] = await Promise.all([
-      chrome.storage.sync.get(M.SETTINGS_KEY).catch(function () {
+      B.storage.sync.get(M.SETTINGS_KEY).catch(function () {
         return {};
       }),
-      chrome.storage.local.get([M.META_KEY, M.BACKGROUND_KEY]).catch(function () {
+      B.storage.local.get([M.META_KEY, M.BACKGROUND_KEY]).catch(function () {
         return {};
       })
     ]);
@@ -150,9 +173,29 @@
     });
 
     backgroundFileInput.addEventListener('change', onBackgroundFile);
+    backgroundFileInput.addEventListener('click', function (event) {
+      if (runningInTab) return;
+      event.preventDefault();
+      openSettingsPage('theme');
+    });
+    backgroundDimColorInput.addEventListener('click', function (event) {
+      if (runningInTab) return;
+      event.preventDefault();
+      openSettingsPage('theme');
+    });
     backgroundRemove.addEventListener('click', onRemoveBackground);
+    exportDataButton.addEventListener('click', onExportData);
+    importDataButton.addEventListener('click', function () {
+      if (!runningInTab) {
+        openSettingsPage('data');
+        return;
+      }
+      importFileInput.click();
+    });
+    importFileInput.addEventListener('change', onImportData);
+    window.addEventListener('hashchange', applyHash);
 
-    chrome.storage.onChanged.addListener(function (changes, area) {
+    B.storage.onChanged.addListener(function (changes, area) {
       if (area === 'sync' && changes[M.SETTINGS_KEY]) {
         state.settings = M.normalizeSettings(changes[M.SETTINGS_KEY].newValue);
         renderVideos();
@@ -170,6 +213,55 @@
         updateBackgroundStatus();
       }
     });
+  }
+
+  function detectTab() {
+    try {
+      if (!B.tabs || typeof B.tabs.getCurrent !== 'function') return Promise.resolve(false);
+      return Promise.resolve(B.tabs.getCurrent())
+        .then(function (tab) {
+          return Boolean(tab);
+        })
+        .catch(function () {
+          return false;
+        });
+    } catch (error) {
+      return Promise.resolve(false);
+    }
+  }
+
+  function openSettingsPage(section) {
+    var url = B.runtime.getURL('src/popup.html');
+    if (section) url += '#' + section;
+
+    try {
+      var pending = B.tabs.create({ url: url });
+      if (pending && typeof pending.then === 'function') {
+        pending.then(closePopup, function () {});
+      } else {
+        window.setTimeout(closePopup, 0);
+      }
+    } catch (error) {
+      setDataStatus('Could not open the settings page.', true);
+    }
+  }
+
+  function closePopup() {
+    if (!runningInTab) window.close();
+  }
+
+  function applyHash() {
+    var name = window.location.hash.replace(/^#/, '').trim();
+    if (!name) return;
+
+    var target = document.getElementById(SECTION_BY_HASH[name] || name);
+    if (!target) return;
+
+    if (target.tagName === 'DETAILS') target.open = true;
+    target.scrollIntoView({ block: 'start' });
+
+    var heading = target.querySelector('summary');
+    if (heading) heading.focus({ preventScroll: true });
   }
 
   function buildToggles() {
@@ -231,27 +323,28 @@
   function syncStyleInputs() {
     NUMBER_INPUTS.concat(TEXT_INPUTS).forEach(function (item) {
       var node = document.getElementById(item.id);
-      if (document.activeElement === node && node.type !== 'color' && node.tagName !== 'SELECT') return;
+      if (document.activeElement === node && node.type !== 'color') return;
       if (item.key === 'fontFamily') ensureFontOption(state.settings.fontFamily);
       node.value = state.settings[item.key];
     });
   }
 
   async function loadFontOptions() {
-    var select = document.getElementById('font-family-input');
+    var datalist = document.getElementById('font-family-options');
+    var inputNode = document.getElementById('font-family-input');
     var selected = state.settings.fontFamily || '';
     var names = new Set(GENERIC_FONTS);
 
     try {
-      var installed = await chrome.fontSettings.getFontList();
-      installed.forEach(function (font) {
-        var name = font && (font.displayName || font.fontId);
-        if (name) names.add(name);
-      });
+      if (B.fontSettings && typeof B.fontSettings.getFontList === 'function') {
+        var installed = await B.fontSettings.getFontList();
+        installed.forEach(function (font) {
+          var name = font && (font.displayName || font.fontId);
+          if (name) names.add(name);
+        });
+      }
     } catch (error) {
-      FALLBACK_FONTS.forEach(function (name) {
-        names.add(name);
-      });
+      /* Firefox/Zen without the fontSettings API falls back to the list below */
     }
 
     if (names.size <= GENERIC_FONTS.length) {
@@ -266,10 +359,6 @@
       return a.localeCompare(b, undefined, { sensitivity: 'base' });
     });
     var fragment = document.createDocumentFragment();
-    var defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = 'YouTube default';
-    fragment.appendChild(defaultOption);
 
     sorted.forEach(function (name) {
       var option = document.createElement('option');
@@ -278,20 +367,20 @@
       fragment.appendChild(option);
     });
 
-    select.replaceChildren(fragment);
-    select.value = selected;
+    datalist.replaceChildren(fragment);
+    inputNode.value = selected;
   }
 
   function ensureFontOption(value) {
     if (!value) return;
-    var select = document.getElementById('font-family-input');
-    for (var i = 0; i < select.options.length; i++) {
-      if (select.options[i].value === value) return;
+    var datalist = document.getElementById('font-family-options');
+    for (var i = 0; i < datalist.options.length; i++) {
+      if (datalist.options[i].value === value) return;
     }
     var option = document.createElement('option');
     option.value = value;
     option.textContent = value;
-    select.appendChild(option);
+    datalist.appendChild(option);
   }
 
   function updateBackgroundStatus() {
@@ -305,8 +394,8 @@
     if (isFileUrl) {
       hasError = true;
       message = localImage
-        ? 'Chrome blocks file:// paths. Using the local image: ' + (state.background.name || 'selected file') + '.'
-        : 'Chrome blocks file:// paths. Choose the image below instead.';
+        ? 'Browsers block file:// paths. Using the local image: ' + (state.background.name || 'selected file') + '.'
+        : 'Browsers block file:// paths. Choose the image below instead.';
     } else if (url && !isUsableUrl) {
       hasError = true;
       message = localImage
@@ -330,7 +419,7 @@
     try {
       var dataUrl = await prepareBackgroundImage(file);
       state.background = { dataUrl: dataUrl, name: file.name, at: Date.now() };
-      await chrome.storage.local.set({ [M.BACKGROUND_KEY]: state.background });
+      await B.storage.local.set({ [M.BACKGROUND_KEY]: state.background });
       state.settings.backgroundUrl = '';
       document.getElementById('background-url-input').value = '';
       save();
@@ -347,7 +436,7 @@
     state.background = null;
     state.settings.backgroundUrl = '';
     document.getElementById('background-url-input').value = '';
-    await chrome.storage.local.remove(M.BACKGROUND_KEY).catch(function () {});
+    await B.storage.local.remove(M.BACKGROUND_KEY).catch(function () {});
     save();
     updateBackgroundStatus();
   }
@@ -455,6 +544,79 @@
     listNode.replaceChildren(fragment);
   }
 
+  async function onExportData() {
+    try {
+      var [sync, local] = await Promise.all([
+        B.storage.sync.get(null),
+        B.storage.local.get(null)
+      ]);
+
+      var payload = {
+        format: 'mytube-backup',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        sync: { [M.SETTINGS_KEY]: sync[M.SETTINGS_KEY] },
+        local: {
+          [M.META_KEY]: local[M.META_KEY],
+          [M.BACKGROUND_KEY]: local[M.BACKGROUND_KEY]
+        }
+      };
+
+      var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement('a');
+      link.href = url;
+      link.download = 'mytube-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(function () {
+        URL.revokeObjectURL(url);
+      }, 10000);
+
+      setDataStatus('Exported settings, video list, metadata cache, and background.');
+    } catch (error) {
+      setDataStatus('Could not export data.', true);
+    }
+  }
+
+  async function onImportData() {
+    var file = importFileInput.files && importFileInput.files[0];
+    if (!file) return;
+
+    try {
+      if (file.size > 50 * 1024 * 1024) throw new Error('That backup is too large.');
+
+      var payload;
+      try {
+        payload = JSON.parse(await file.text());
+      } catch (error) {
+        throw new Error('That is not a MyTube backup file.');
+      }
+
+      var backup = M.normalizeBackup(payload);
+      if (!backup) throw new Error('That is not a MyTube backup file.');
+
+      await B.storage.sync.set({ [M.SETTINGS_KEY]: backup.settings });
+      if (backup.meta) await B.storage.local.set({ [M.META_KEY]: backup.meta });
+      else await B.storage.local.remove(M.META_KEY);
+      if (backup.background) await B.storage.local.set({ [M.BACKGROUND_KEY]: backup.background });
+      else await B.storage.local.remove(M.BACKGROUND_KEY);
+
+      var count = backup.settings.videos.length;
+      setDataStatus('Imported ' + count + ' video' + (count === 1 ? '' : 's') + '.');
+    } catch (error) {
+      setDataStatus(error && error.message ? error.message : 'Could not import that file.', true);
+    } finally {
+      importFileInput.value = '';
+    }
+  }
+
+  function setDataStatus(message, isError) {
+    dataStatus.textContent = message;
+    dataStatus.classList.toggle('status-error', Boolean(isError));
+  }
+
   function showError(message) {
     errorNode.textContent = message;
     errorNode.hidden = false;
@@ -466,8 +628,8 @@
   }
 
   function save() {
-    chrome.storage.sync.set({ [M.SETTINGS_KEY]: state.settings }).catch(function () {
-      showError('Could not save. Check Chrome sync storage.');
+    B.storage.sync.set({ [M.SETTINGS_KEY]: state.settings }).catch(function () {
+      showError('Could not save. Check browser sync storage.');
     });
   }
 })();

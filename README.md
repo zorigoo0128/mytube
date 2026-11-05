@@ -1,10 +1,12 @@
 # MyTube
 
-MyTube is a small Chrome extension (Manifest V3) that replaces YouTube's home
-recommendation feed with a list of videos you choose, and hides the parts of
-YouTube you would rather not see.
+MyTube is a small browser extension (Manifest V3) for Chrome and for
+Firefox-based browsers such as Zen. It replaces YouTube's home recommendation
+feed with a list of videos you choose, and hides the parts of YouTube you would
+rather not see.
 
-No build step and no server. Load the folder unpacked in Chrome and it runs.
+No build step and no server. Load the folder unpacked in Chrome or load
+`manifest.json` as a temporary add-on in Zen/Firefox and it runs.
 
 ## What it does
 
@@ -54,11 +56,49 @@ YouTube's normal home page is left alone until you add at least one video.
 
 ## Install
 
+### Chrome (and other Chromium browsers)
+
 1. Open `chrome://extensions`.
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and choose this folder.
 4. Optionally pin MyTube to the toolbar.
 5. Open or reload YouTube.
+
+### Zen (and Firefox)
+
+Zen is built on Firefox, so MyTube runs as a standard Firefox WebExtension.
+
+To try it without signing:
+
+1. Open `about:debugging#/runtime/this-firefox`.
+2. Click **Load Temporary Add-on…** and choose `manifest.json` in this folder.
+3. Open or reload YouTube.
+
+A temporary add-on disappears when Zen restarts. For a permanent local install:
+
+1. Open `about:config` and set `xpinstall.signatures.required` to `false`.
+2. Run `zip -r mytube.xpi . -x ".git/*" ".github/*" "*.zip" "*.xpi" ".DS_Store" "node_modules/*"`
+   from this folder.
+3. Open `about:addons`, click the gear, choose **Install Add-on From File…**,
+   and select `mytube.xpi`.
+
+Alternatively, submit the ZIP to [addons.mozilla.org](https://addons.mozilla.org/developers/)
+for signing; the signed build installs normally without changing preferences.
+The extension ID in `manifest.json` (`mytube@zorigoo0128.github.io`) must stay
+the same across releases so the browser treats them as updates.
+
+### Move from Chrome to Zen
+
+1. In Chrome, open the MyTube popup, expand **Data**, and click **Export data**.
+2. In Zen, open the MyTube popup, expand **Data**, and click **Import data**.
+   Zen closes toolbar popups when a file dialog opens, so this opens the
+   settings page in a tab. Click **Import data** again there.
+3. Select the `mytube-backup-YYYY-MM-DD.json` file downloaded in step 1.
+
+The backup contains the video list, switches, theme, video metadata cache, and
+the local background image. The file is written to your downloads folder and is
+never uploaded. Both browsers need this build of MyTube, which has the **Data**
+section.
 
 ## Use
 
@@ -76,12 +116,20 @@ click a section title to open or close it.
   thumbnail; width sets the home-feed column width, and gap applies to the home
   feed and related grid. Changes are saved automatically.
 - Set the theme under **Theme**: font family, font size, text color,
-  background image, dim color and opacity, and a CSS filter. Font family is a
-  dropdown of installed fonts plus generic families. `0` keeps YouTube's own
-  text sizes. The filter is applied to the whole page through a full-screen,
-  click-through overlay. Use the local image picker for files on your computer;
-  **Remove background** clears both the URL and the local image.
+  background image, dim color and opacity, and a CSS filter. Font family lists
+  installed fonts when the browser exposes them, plus common families; you can
+  also type any font family name. `0` keeps YouTube's own text sizes. The filter
+  is applied to the whole page through a full-screen, click-through overlay. Use
+  the local image picker for files on your computer; **Remove background**
+  clears both the URL and the local image.
 - Flip switches under **Hide on YouTube**. Changes are saved automatically.
+- Use **Data → Export data** to save a JSON backup of the video list, switches,
+  theme, metadata cache, and local background image. **Import data** restores a
+  backup and replaces the current data. Changes apply to open tabs immediately.
+  In Firefox-based browsers, **Import data**, the local background picker, and
+  the dim color picker open the same controls in a full settings tab, because
+  the toolbar popup closes as soon as a native file or color dialog opens. The
+  settings tab opens on the matching section; click the control again there.
 
 The custom feed appears on the YouTube home page. Watch pages use the static
 stacked layout described above, with the enabled elements hidden. Search and
@@ -89,17 +137,19 @@ channel pages keep their normal layout, with the enabled elements hidden.
 
 ## Data and privacy
 
-Everything stays in Chrome:
+Everything stays in your browser:
 
-- Video list, switches, and global style settings: `chrome.storage.sync`.
+- Video list, switches, and global style settings: the browser's `storage.sync`
+  area.
 - Video metadata cache (title, thumbnail, channel, views, date, duration):
-  `chrome.storage.local`. Entries are considered stale after 24 hours and are
+  `storage.local`. Entries are considered stale after 24 hours and are
   refreshed the next time the home feed is built.
-- A local background image: `chrome.storage.local`. The picker resizes it to at
-  most 2560 px on the long side and stores a compressed WebP data URL. It is
-  never uploaded.
-- Installed font names: read on demand with Chrome's `fontSettings` API to fill
-  the font dropdown. They are not stored or sent anywhere.
+- A local background image: `storage.local`. The picker resizes it to at most
+  2560 px on the long side and stores a compressed WebP data URL. It is never
+  uploaded.
+- Installed font names: read on demand with the browser's `fontSettings` API
+  where it is available to fill the font suggestions; otherwise a built-in list
+  of common families is shown. They are not stored or sent anywhere.
 
 To fill in the cards, the content script requests public YouTube watch pages
 (same-origin) and falls back to YouTube's oEmbed endpoint. Thumbnails and
@@ -108,6 +158,8 @@ only; there is no analytics, tracking, or third-party service.
 
 ## How it works
 
+- `src/browser.js` — selects the promise-based `browser` API on Firefox/Zen and
+  falls back to `chrome` on Chromium.
 - `src/shared.js` — pure helpers: URL parsing, settings normalization,
   watch-page parsing, formatting.
 - `src/content.js` — injects `#mytube-feed` into
@@ -143,7 +195,8 @@ python3 tools/make-icons.py
 ```
 
 There is no bundler; edit the files and reload the extension in
-`chrome://extensions`.
+`chrome://extensions` (Chrome) or `about:debugging#/runtime/this-firefox`
+(Zen/Firefox).
 
 ## Limitations
 
@@ -163,9 +216,17 @@ There is no bundler; edit the files and reload the extension in
 - Metadata can be up to 24 hours old because of the cache. If YouTube blocks a
   metadata request, the card falls back to its thumbnail and any cached data.
 - Comments hiding covers the comment section, not live chat.
-- Chrome blocks `file://` images on YouTube pages. Use the local image picker
+- Browsers block `file://` images on YouTube pages. Use the local image picker
   instead; it stores a compressed copy of the selected image in extension
   storage.
+- Firefox and Zen close a toolbar popup when a native file or color dialog
+  opens. MyTube therefore moves **Import data**, the local background picker,
+  and the dim color picker to a full settings tab. Clicking one of them in the
+  popup opens that tab on the right section, and the control has to be clicked
+  once more there.
+- Firefox-based builds such as Zen do not expose the installed-font list to
+  extensions. The font picker then shows common families and accepts any typed
+  family name; the font still has to be installed on the system to render.
 - Global font size and text color override every text element instead of
   preserving YouTube's heading/body hierarchy. This is intentional, but very
   large sizes or low-contrast colors can make parts of the interface hard to
