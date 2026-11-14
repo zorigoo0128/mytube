@@ -10,6 +10,14 @@
   --switch-off: #909090;
   --switch-on: #065fd4;
   --focus: #065fd4;
+  --glass-fill: rgba(255, 255, 255, 0.55);
+  --glass-fill-strong: rgba(255, 255, 255, 0.72);
+  --glass-edge: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 8px 28px rgba(15, 23, 42, 0.12);
+  --glass-blur: blur(24px) saturate(180%);
+  --backdrop-tint-a: #ffd6e0;
+  --backdrop-tint-b: #cfe6ff;
+  --backdrop-tint-c: #e6ffe9;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,6 +31,13 @@
     --switch-off: #777777;
     --switch-on: #3ea6ff;
     --focus: #3ea6ff;
+    --glass-fill: rgba(40, 40, 46, 0.5);
+    --glass-fill-strong: rgba(50, 50, 58, 0.68);
+    --glass-edge: rgba(255, 255, 255, 0.14);
+    --glass-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    --backdrop-tint-a: #4a1a2a;
+    --backdrop-tint-b: #1a2f52;
+    --backdrop-tint-c: #173a2a;
   }
 }
 
@@ -42,7 +57,11 @@ body {
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
-  background: var(--bg);
+  background:
+    radial-gradient(120% 80% at 0% 0%, var(--backdrop-tint-a), transparent 60%),
+    radial-gradient(120% 90% at 100% 30%, var(--backdrop-tint-b), transparent 60%),
+    radial-gradient(120% 90% at 40% 100%, var(--backdrop-tint-c), transparent 65%),
+    var(--bg);
   color: var(--text);
   font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
   font-size: 14px;
@@ -65,8 +84,14 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  margin: 12px 12px 0;
   padding: 16px 16px 12px;
-  border-bottom: 1px solid var(--border);
+  border: 1px solid var(--glass-edge);
+  border-radius: 18px;
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
 }
 
 .brand-mark {
@@ -95,16 +120,18 @@ body {
 }
 
 main {
-  padding: 4px 16px 16px;
+  padding: 10px 12px 16px;
 }
 
 .section {
-  padding: 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.section:last-of-type {
-  border-bottom: 0;
+  margin-bottom: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--glass-edge);
+  border-radius: 16px;
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
 }
 
 .section-heading {
@@ -183,7 +210,8 @@ h2 {
   min-width: 22px;
   padding: 1px 7px;
   border-radius: 999px;
-  background: var(--surface);
+  border: 1px solid var(--glass-edge);
+  background: var(--glass-fill-strong);
   color: var(--muted);
   font-size: 12px;
   text-align: center;
@@ -226,7 +254,8 @@ h2 {
   margin: 12px 0 0;
   padding: 8px 10px;
   border-radius: 8px;
-  background: var(--surface);
+  border: 1px solid var(--glass-edge);
+  background: var(--glass-fill-strong);
   color: var(--muted);
   font-size: 11px;
 }
@@ -234,9 +263,9 @@ h2 {
 .text-input {
   width: 100%;
   padding: 8px 10px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-edge);
   border-radius: 8px;
-  background: var(--bg);
+  background: var(--glass-fill-strong);
   color: var(--text);
   font: inherit;
   font-size: 13px;
@@ -257,9 +286,9 @@ h2 {
   width: 100%;
   height: 36px;
   padding: 2px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-edge);
   border-radius: 8px;
-  background: var(--bg);
+  background: var(--glass-fill-strong);
   cursor: pointer;
 }
 
@@ -294,9 +323,9 @@ h2 {
 textarea {
   width: 100%;
   padding: 9px 10px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--glass-edge);
   border-radius: 8px;
-  background: var(--bg);
+  background: var(--glass-fill-strong);
   color: var(--text);
   font: inherit;
   font-size: 13px;
@@ -333,16 +362,22 @@ textarea:focus-visible {
   padding: 6px 16px;
   border: 0;
   border-radius: 999px;
-  background: var(--text);
-  color: var(--bg);
+  background: color-mix(in srgb, var(--focus) 70%, transparent);
+  color: #fff;
   font: inherit;
   font-size: 13px;
   font-weight: 500;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 4px 12px rgba(0, 0, 0, 0.15);
   cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
 .btn:hover {
   opacity: 0.85;
+}
+
+.btn:active {
+  transform: scale(0.97);
 }
 
 .btn:focus-visible {
@@ -353,13 +388,14 @@ textarea:focus-visible {
 .btn.secondary {
   margin-left: 0;
   padding: 7px 12px;
-  border: 1px solid var(--border);
-  background: var(--surface);
+  border: 1px solid var(--glass-edge);
+  background: var(--glass-fill-strong);
   color: var(--text);
+  box-shadow: none;
 }
 
 .btn.secondary:hover {
-  background: var(--surface-hover);
+  background: var(--glass-fill);
   opacity: 1;
 }
 
@@ -386,7 +422,7 @@ textarea:focus-visible {
 }
 
 .video-item:hover {
-  background: var(--surface);
+  background: var(--glass-fill-strong);
 }
 
 .video-thumb {
@@ -436,7 +472,7 @@ textarea:focus-visible {
 }
 
 .remove:hover {
-  background: var(--surface-hover);
+  background: var(--glass-fill-strong);
   color: var(--text);
 }
 
@@ -500,6 +536,7 @@ textarea:focus-visible {
   height: 20px;
   border-radius: 999px;
   background: var(--switch-off);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
   transition: background-color 0.15s ease;
 }
 
@@ -513,7 +550,7 @@ textarea:focus-visible {
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  transition: transform 0.15s ease;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .toggle input:checked + .switch {
@@ -534,6 +571,36 @@ textarea:focus-visible {
   color: var(--muted);
   font-size: 11px;
   text-align: center;
+}
+
+/* Browsers without backdrop-filter get opaque surfaces instead of glass. */
+@supports not (backdrop-filter: blur(1px)) {
+  :root {
+    --glass-fill: var(--surface);
+    --glass-fill-strong: var(--surface-hover);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-fill: var(--surface);
+    --glass-fill-strong: var(--surface-hover);
+  }
+
+  .header,
+  .section {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 /* The same page opened in a normal tab, where file and color dialogs work. */
