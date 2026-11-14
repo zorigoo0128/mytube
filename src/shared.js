@@ -13,7 +13,7 @@
 
   var DEFAULT_SETTINGS = {
     videos: [],
-    brandText: 'MyTube',
+    brandText: 'SilentTube',
     thumbnailRadius: 12,
     cardSize: 272,
     cardGap: 16,
@@ -53,6 +53,10 @@
     backgroundUrl: 2048,
     cssFilter: 200
   };
+
+  /* The brand text shipped before the rename. A stored value equal to it is
+     the old default rather than a deliberate choice, so it follows the rename. */
+  var LEGACY_BRAND_TEXT = 'MyTube';
 
   var VIDEO_ID_RE = /^[A-Za-z0-9_-]{11}$/;
   var YOUTUBE_HOSTS = new Set(['youtube.com', 'youtu.be', 'youtube-nocookie.com']);
@@ -110,6 +114,7 @@
 
     if (typeof raw.brandText === 'string') {
       settings.brandText = raw.brandText.slice(0, 40);
+      if (settings.brandText === LEGACY_BRAND_TEXT) settings.brandText = DEFAULT_SETTINGS.brandText;
     }
 
     Object.keys(TEXT_LIMITS).forEach(function (key) {
@@ -148,7 +153,7 @@
 
   /**
    * Validates a backup produced by the popup's export command. Accepts only
-   * the `sync` / `local` shape written by MyTube and normalizes the settings,
+   * the `sync` / `local` shape written by SilentTube and normalizes the settings,
    * metadata cache, and background image.
    */
   function normalizeBackup(raw) {
@@ -439,6 +444,6 @@
     avatarHue: avatarHue
   };
 
-  root.MyTube = api;
+  root.SilentTube = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

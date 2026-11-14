@@ -15,5 +15,5 @@
       ? root.browser
       : root.chrome;
 
-  root.MyTubeBrowser = api;
+  root.SilentTubeBrowser = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Restyle the MyTube toolbar popup with a liquid-glass look, changing only its stylesheet.
+**Goal:** Restyle the SilentTube toolbar popup with a liquid-glass look, changing only its stylesheet.
 
 **Architecture:** One CSS file. Add glass custom properties to `:root` and the dark-mode block, then override the existing popup selectors. No markup or script changes.
 
@@ -134,7 +134,7 @@ Add at the end of the file:
 
 - [ ] **Step 7: Run the existing tests**
 
-Run: `cd /Users/zorigoo/Projects/MyTube && node --test`
+Run: `cd /Users/zorigoo/Projects/SilentTube && node --test`
 Expected: all tests pass (the suite only covers `src/shared.js`, so this confirms nothing else moved).
 
 - [ ] **Step 8: Verify the popup visually**

@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "MyTube",
+  "name": "SilentTube",
   "version": "0.1.1",
   "description": "Choose the videos that appear on your YouTube home page and hide the parts of YouTube you don't want.",
   "minimum_chrome_version": "120",
   "permissions": ["storage", "fontSettings"],
   "host_permissions": ["https://www.youtube.com/*", "https://youtube.com/*"],
   "action": {
-    "default_title": "MyTube",
+    "default_title": "SilentTube",
     "default_popup": "src/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

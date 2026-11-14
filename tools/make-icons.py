@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates the MyTube toolbar icons (no third-party dependencies)."""
+"""Generates the SilentTube toolbar icons (no third-party dependencies)."""
 
 import math
 import os

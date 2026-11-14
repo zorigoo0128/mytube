@@ -1,6 +1,6 @@
-# MyTube
+# SilentTube
 
-MyTube is a small browser extension (Manifest V3) for Chrome and for
+SilentTube is a small browser extension (Manifest V3) for Chrome and for
 Firefox-based browsers such as Zen. It replaces YouTube's home recommendation
 feed with a list of videos you choose, and hides the parts of YouTube you would
 rather not see.
@@ -40,7 +40,7 @@ immediately in open tabs:
 
 - The top bar is transparent and drops the YouTube logo, the microphone, and
   the entire right-side control group (Create, Notifications, profile,
-  settings, and sign-in). A text brand (set in the popup, "MyTube" by default)
+  settings, and sign-in). A text brand (set in the popup, "SilentTube" by default)
   takes the logo's place.
 - The search box moves to the right side at half its previous width, loses its
   magnifier button, and has no background, border, or focus ring. Pressing
@@ -61,12 +61,12 @@ YouTube's normal home page is left alone until you add at least one video.
 1. Open `chrome://extensions`.
 2. Turn on **Developer mode**.
 3. Click **Load unpacked** and choose this folder.
-4. Optionally pin MyTube to the toolbar.
+4. Optionally pin SilentTube to the toolbar.
 5. Open or reload YouTube.
 
 ### Zen (and Firefox)
 
-Zen is built on Firefox, so MyTube runs as a standard Firefox WebExtension.
+Zen is built on Firefox, so SilentTube runs as a standard Firefox WebExtension.
 
 To try it without signing:
 
@@ -77,32 +77,32 @@ To try it without signing:
 A temporary add-on disappears when Zen restarts. For a permanent local install:
 
 1. Open `about:config` and set `xpinstall.signatures.required` to `false`.
-2. Run `zip -r mytube.xpi . -x ".git/*" ".github/*" "*.zip" "*.xpi" ".DS_Store" "node_modules/*"`
+2. Run `zip -r silenttube.xpi . -x ".git/*" ".github/*" "*.zip" "*.xpi" ".DS_Store" "node_modules/*"`
    from this folder.
 3. Open `about:addons`, click the gear, choose **Install Add-on From File…**,
-   and select `mytube.xpi`.
+   and select `silenttube.xpi`.
 
 Alternatively, submit the ZIP to [addons.mozilla.org](https://addons.mozilla.org/developers/)
 for signing; the signed build installs normally without changing preferences.
-The extension ID in `manifest.json` (`mytube@zorigoo0128.github.io`) must stay
+The extension ID in `manifest.json` (`silenttube@zorigoo0128.github.io`) must stay
 the same across releases so the browser treats them as updates.
 
 ### Move from Chrome to Zen
 
-1. In Chrome, open the MyTube popup, expand **Data**, and click **Export data**.
-2. In Zen, open the MyTube popup, expand **Data**, and click **Import data**.
+1. In Chrome, open the SilentTube popup, expand **Data**, and click **Export data**.
+2. In Zen, open the SilentTube popup, expand **Data**, and click **Import data**.
    Zen closes toolbar popups when a file dialog opens, so this opens the
    settings page in a tab. Click **Import data** again there.
-3. Select the `mytube-backup-YYYY-MM-DD.json` file downloaded in step 1.
+3. Select the `silenttube-backup-YYYY-MM-DD.json` file downloaded in step 1.
 
 The backup contains the video list, switches, theme, video metadata cache, and
 the local background image. The file is written to your downloads folder and is
-never uploaded. Both browsers need this build of MyTube, which has the **Data**
+never uploaded. Both browsers need this build of SilentTube, which has the **Data**
 section.
 
 ## Use
 
-Open the MyTube popup. The controls are grouped into collapsible sections;
+Open the SilentTube popup. The controls are grouped into collapsible sections;
 click a section title to open or close it.
 
 - Under **Your videos**, paste links into the box, one per line (spaces and
@@ -162,7 +162,7 @@ only; there is no analytics, tracking, or third-party service.
   falls back to `chrome` on Chromium.
 - `src/shared.js` — pure helpers: URL parsing, settings normalization,
   watch-page parsing, formatting.
-- `src/content.js` — injects `#mytube-feed` into
+- `src/content.js` — injects `#silenttube-feed` into
   `ytd-browse[page-subtype="home"] #primary`, fetches and caches metadata,
   handles SPA navigation and Shorts redirects, tags YouTube's own
   channel/views/date spans, renders the top-bar brand, applies card and global
@@ -170,7 +170,7 @@ only; there is no analytics, tracking, or third-party service.
   enters theater mode, and manages the watch-page dimmer.
 - `src/content.css` — the feed grid and card styling, global typography and
   background styling, the static top-bar / watch-page layout, and the
-  `html.mytube-hide-*` selectors behind each switch.
+  `html.silenttube-hide-*` selectors behind each switch.
 - `src/popup.*` — the toolbar control panel, including background-image
   selection and compression.
 
@@ -211,7 +211,7 @@ There is no bundler; edit the files and reload the extension in
 - Live broadcasts are removed from the related list. Live chat (on streams) is
   not affected.
 - A regular (non-Shorts) video opened through a `/shorts/` URL is redirected by
-  YouTube itself to `/watch`, so MyTube cannot turn that one into a home-page
+  YouTube itself to `/watch`, so SilentTube cannot turn that one into a home-page
   redirect. Real Shorts links are redirected.
 - Metadata can be up to 24 hours old because of the cache. If YouTube blocks a
   metadata request, the card falls back to its thumbnail and any cached data.
@@ -220,7 +220,7 @@ There is no bundler; edit the files and reload the extension in
   instead; it stores a compressed copy of the selected image in extension
   storage.
 - Firefox and Zen close a toolbar popup when a native file or color dialog
-  opens. MyTube therefore moves **Import data**, the local background picker,
+  opens. SilentTube therefore moves **Import data**, the local background picker,
   and the dim color picker to a full settings tab. Clicking one of them in the
   popup opens that tab on the right section, and the control has to be clicked
   once more there.
@@ -235,4 +235,4 @@ There is no bundler; edit the files and reload the extension in
   overlay, so they affect thumbnails, panels, and the background image without
   blocking clicks. Expensive filters can reduce scrolling or video performance.
 
-MyTube is not affiliated with YouTube or Google.
+SilentTube is not affiliated with YouTube or Google.

@@ -53,7 +53,7 @@ test('normalizeSettings dedupes videos and fills defaults', () => {
   });
 
   assert.deepEqual(settings.videos, [ID, 'M7lc1UVf-VE']);
-  assert.equal(settings.brandText, 'MyTube');
+  assert.equal(settings.brandText, 'SilentTube');
   assert.equal(settings.hidden.comments, true);
   assert.equal(settings.hidden.shorts, false);
   assert.equal(settings.hidden['watch-top-row'], false);
@@ -64,7 +64,7 @@ test('normalizeSettings survives missing or broken data', () => {
   for (const input of [undefined, null, 'nope', 42, {}]) {
     const settings = M.normalizeSettings(input);
     assert.deepEqual(settings.videos, []);
-    assert.equal(settings.brandText, 'MyTube');
+    assert.equal(settings.brandText, 'SilentTube');
     assert.deepEqual(settings.hidden, M.DEFAULT_SETTINGS.hidden);
   }
 });
@@ -72,8 +72,12 @@ test('normalizeSettings survives missing or broken data', () => {
 test('normalizeSettings keeps an editable, bounded brand text', () => {
   assert.equal(M.normalizeSettings({ brandText: 'My Channel' }).brandText, 'My Channel');
   assert.equal(M.normalizeSettings({ brandText: '' }).brandText, '');
-  assert.equal(M.normalizeSettings({ brandText: 42 }).brandText, 'MyTube');
+  assert.equal(M.normalizeSettings({ brandText: 42 }).brandText, 'SilentTube');
   assert.equal(M.normalizeSettings({ brandText: 'x'.repeat(80) }).brandText.length, 40);
+});
+
+test('normalizeSettings carries the pre-rename brand text over', () => {
+  assert.equal(M.normalizeSettings({ brandText: 'MyTube' }).brandText, 'SilentTube');
 });
 
 test('normalizeSettings fills appearance defaults', () => {
@@ -337,7 +341,7 @@ test('avatar helpers are stable and safe', () => {
 
 test('normalizeBackup accepts an exported backup and normalizes it', () => {
   const backup = M.normalizeBackup({
-    format: 'mytube-backup',
+    format: 'silenttube-backup',
     version: 1,
     sync: {
       settings: {

@@ -1,9 +1,9 @@
-/* MyTube content script: applies the switches and builds the hand-picked home feed. */
+/* SilentTube content script: applies the switches and builds the hand-picked home feed. */
 (function () {
   'use strict';
 
-  var M = globalThis.MyTube;
-  var B = globalThis.MyTubeBrowser || globalThis.chrome;
+  var M = globalThis.SilentTube;
+  var B = globalThis.SilentTubeBrowser || globalThis.chrome;
   if (!M) return;
 
   var state = {
@@ -46,7 +46,7 @@
     '.yt-lockup-metadata-view-model__title, ' +
     '.yt-lockup-metadata-view-model-wiz__title, ' +
     '.ytLockupMetadataViewModelTitle, ' +
-    '#mytube-feed .mytube-title';
+    '#silenttube-feed .silenttube-title';
 
   boot();
 
@@ -127,12 +127,12 @@
     var hidden = state.settings.hidden;
 
     Object.keys(hidden).forEach(function (key) {
-      root.classList.toggle('mytube-hide-' + key, Boolean(hidden[key]));
+      root.classList.toggle('silenttube-hide-' + key, Boolean(hidden[key]));
     });
-    root.classList.toggle('mytube-custom-home', shouldCustomizeHome());
-    root.style.setProperty('--mytube-thumb-radius', state.settings.thumbnailRadius + 'px');
-    root.style.setProperty('--mytube-card-size', state.settings.cardSize + 'px');
-    root.style.setProperty('--mytube-card-gap', state.settings.cardGap + 'px');
+    root.classList.toggle('silenttube-custom-home', shouldCustomizeHome());
+    root.style.setProperty('--silenttube-thumb-radius', state.settings.thumbnailRadius + 'px');
+    root.style.setProperty('--silenttube-card-size', state.settings.cardSize + 'px');
+    root.style.setProperty('--silenttube-card-gap', state.settings.cardGap + 'px');
     applyGlobalStyle();
     applyBackground();
     syncBrandText();
@@ -147,24 +147,24 @@
     var settings = state.settings;
 
     var fontFamily = settings.fontFamily || '';
-    root.classList.toggle('mytube-custom-font', Boolean(fontFamily));
-    if (fontFamily) root.style.setProperty('--mytube-font-family', fontFamily);
-    else root.style.removeProperty('--mytube-font-family');
+    root.classList.toggle('silenttube-custom-font', Boolean(fontFamily));
+    if (fontFamily) root.style.setProperty('--silenttube-font-family', fontFamily);
+    else root.style.removeProperty('--silenttube-font-family');
 
     var fontSize = settings.fontSize;
-    root.classList.toggle('mytube-custom-font-size', fontSize > 0);
-    if (fontSize > 0) root.style.setProperty('--mytube-font-size', fontSize + 'px');
-    else root.style.removeProperty('--mytube-font-size');
+    root.classList.toggle('silenttube-custom-font-size', fontSize > 0);
+    if (fontSize > 0) root.style.setProperty('--silenttube-font-size', fontSize + 'px');
+    else root.style.removeProperty('--silenttube-font-size');
 
     var textColor = settings.textColor || '';
-    root.classList.toggle('mytube-custom-text-color', Boolean(textColor));
-    if (textColor) root.style.setProperty('--mytube-text-color', textColor);
-    else root.style.removeProperty('--mytube-text-color');
+    root.classList.toggle('silenttube-custom-text-color', Boolean(textColor));
+    if (textColor) root.style.setProperty('--silenttube-text-color', textColor);
+    else root.style.removeProperty('--silenttube-text-color');
 
     var filter = settings.cssFilter || '';
-    root.classList.toggle('mytube-has-filter', Boolean(filter));
-    if (filter) root.style.setProperty('--mytube-css-filter', filter);
-    else root.style.removeProperty('--mytube-css-filter');
+    root.classList.toggle('silenttube-has-filter', Boolean(filter));
+    if (filter) root.style.setProperty('--silenttube-css-filter', filter);
+    else root.style.removeProperty('--silenttube-css-filter');
     root.style.removeProperty('filter');
   }
 
@@ -176,16 +176,16 @@
     var image = url || (typeof localImage === 'string' ? localImage : '');
 
     if (!image) {
-      root.classList.remove('mytube-has-background');
-      root.style.removeProperty('--mytube-bg-image');
-      root.style.removeProperty('--mytube-bg-dim');
+      root.classList.remove('silenttube-has-background');
+      root.style.removeProperty('--silenttube-bg-image');
+      root.style.removeProperty('--silenttube-bg-dim');
       return;
     }
 
-    root.classList.add('mytube-has-background');
-    root.style.setProperty('--mytube-bg-image', 'url(' + JSON.stringify(image) + ')');
+    root.classList.add('silenttube-has-background');
+    root.style.setProperty('--silenttube-bg-image', 'url(' + JSON.stringify(image) + ')');
     root.style.setProperty(
-      '--mytube-bg-dim',
+      '--silenttube-bg-dim',
       M.hexToRgba(state.settings.backgroundDimColor, state.settings.backgroundDimOpacity)
     );
   }
@@ -210,10 +210,10 @@
     if (!start) return;
 
     var text = (state.settings.brandText || '').trim();
-    var brand = start.querySelector('.mytube-brand-text');
+    var brand = start.querySelector('.silenttube-brand-text');
     if (!brand) {
       brand = document.createElement('a');
-      brand.className = 'mytube-brand-text';
+      brand.className = 'silenttube-brand-text';
       brand.href = '/';
     }
 
@@ -286,17 +286,17 @@
       watchDimPlayer = player;
     }
 
-    var overlay = document.querySelector('body > .mytube-watch-dim');
+    var overlay = document.querySelector('body > .silenttube-watch-dim');
     if (!overlay) {
       overlay = document.createElement('div');
-      overlay.className = 'mytube-watch-dim';
+      overlay.className = 'silenttube-watch-dim';
       overlay.setAttribute('role', 'button');
       overlay.setAttribute('tabindex', '0');
       overlay.setAttribute('aria-label', 'Reveal page');
       overlay.title = 'Reveal page';
       for (var i = 0; i < 4; i++) {
         var pane = document.createElement('div');
-        pane.className = 'mytube-watch-dim-pane';
+        pane.className = 'silenttube-watch-dim-pane';
         pane.setAttribute('aria-hidden', 'true');
         overlay.appendChild(pane);
       }
@@ -328,7 +328,7 @@
     watchDimQueued = true;
     requestAnimationFrame(function () {
       watchDimQueued = false;
-      var overlay = document.querySelector('body > .mytube-watch-dim');
+      var overlay = document.querySelector('body > .silenttube-watch-dim');
       var player = document.querySelector('#movie_player');
       if (overlay && player) positionWatchDimmer(overlay, player);
     });
@@ -380,11 +380,11 @@
     if (watchDimObserver) watchDimObserver.disconnect();
     watchDimPlayer = null;
 
-    var overlays = document.querySelectorAll('.mytube-watch-dim, .mytube-related-dim');
+    var overlays = document.querySelectorAll('.silenttube-watch-dim, .silenttube-related-dim');
     for (var i = 0; i < overlays.length; i++) overlays[i].remove();
 
-    var legacy = document.querySelectorAll('.mytube-related-dimmed');
-    for (var j = 0; j < legacy.length; j++) legacy[j].classList.remove('mytube-related-dimmed');
+    var legacy = document.querySelectorAll('.silenttube-related-dimmed');
+    for (var j = 0; j < legacy.length; j++) legacy[j].classList.remove('silenttube-related-dimmed');
   }
 
   /* ------------------------------------------------------------------ *
@@ -402,9 +402,9 @@
 
   function syncHome() {
     var wanted = shouldCustomizeHome();
-    document.documentElement.classList.toggle('mytube-custom-home', wanted);
+    document.documentElement.classList.toggle('silenttube-custom-home', wanted);
 
-    var feed = document.getElementById('mytube-feed');
+    var feed = document.getElementById('silenttube-feed');
     if (!wanted) {
       if (feed) feed.remove();
       feedSignature = '';
@@ -420,7 +420,7 @@
     if (!feed || !primary.contains(feed)) {
       if (feed) feed.remove();
       feed = document.createElement('div');
-      feed.id = 'mytube-feed';
+      feed.id = 'silenttube-feed';
       primary.appendChild(feed);
       feedSignature = '';
     }
@@ -437,16 +437,16 @@
     var meta = state.meta[id] || {};
 
     var card = document.createElement('a');
-    card.className = 'mytube-card';
+    card.className = 'silenttube-card';
     card.href = '/watch?v=' + encodeURIComponent(id);
     card.dataset.videoId = id;
     card.setAttribute('aria-label', M.normalizeVideoTitle(meta.title || 'YouTube video'));
 
     var thumb = document.createElement('div');
-    thumb.className = 'mytube-thumb';
+    thumb.className = 'silenttube-thumb';
 
     var img = document.createElement('img');
-    img.className = 'mytube-thumb-img';
+    img.className = 'silenttube-thumb-img';
     img.alt = '';
     img.loading = 'lazy';
     img.src = meta.thumb || 'https://i.ytimg.com/vi/' + id + '/maxresdefault.jpg';
@@ -462,43 +462,43 @@
     thumb.appendChild(img);
 
     var duration = document.createElement('span');
-    duration.className = 'mytube-duration';
+    duration.className = 'silenttube-duration';
     duration.textContent = M.formatDuration(meta.duration);
     thumb.appendChild(duration);
 
     var info = document.createElement('div');
-    info.className = 'mytube-info';
+    info.className = 'silenttube-info';
 
     var avatar = document.createElement('div');
-    avatar.className = 'mytube-avatar';
+    avatar.className = 'silenttube-avatar';
     avatar.setAttribute('aria-hidden', 'true');
     applyAvatar(avatar, meta);
     info.appendChild(avatar);
 
     var texts = document.createElement('div');
-    texts.className = 'mytube-texts';
+    texts.className = 'silenttube-texts';
 
     var title = document.createElement('h3');
-    title.className = 'mytube-title';
+    title.className = 'silenttube-title';
     title.textContent = M.normalizeVideoTitle(meta.title || '');
     texts.appendChild(title);
 
     var metaLine = document.createElement('div');
-    metaLine.className = 'mytube-meta';
+    metaLine.className = 'silenttube-meta';
 
     var byline = document.createElement('span');
-    byline.className = 'mytube-byline';
+    byline.className = 'silenttube-byline';
     byline.textContent = meta.author || '';
     metaLine.appendChild(byline);
 
     var views = document.createElement('span');
-    views.className = 'mytube-views';
+    views.className = 'silenttube-views';
     views.textContent = M.formatCompactViews(meta.views);
     views.title = M.formatViews(meta.views);
     metaLine.appendChild(views);
 
     var date = document.createElement('span');
-    date.className = 'mytube-date';
+    date.className = 'silenttube-date';
     date.textContent = M.formatCompactDate(meta.published);
     metaLine.appendChild(date);
 
@@ -517,7 +517,7 @@
 
     if (meta.avatar) {
       var img = document.createElement('img');
-      img.className = 'mytube-avatar-img';
+      img.className = 'silenttube-avatar-img';
       img.alt = '';
       img.loading = 'lazy';
       img.src = meta.avatar;
@@ -535,34 +535,34 @@
   function updateCard(id) {
     var meta = state.meta[id];
     if (!meta) return;
-    var card = document.querySelector('#mytube-feed .mytube-card[data-video-id="' + id + '"]');
+    var card = document.querySelector('#silenttube-feed .silenttube-card[data-video-id="' + id + '"]');
     if (!card) return;
 
     card.setAttribute('aria-label', M.normalizeVideoTitle(meta.title || 'YouTube video'));
-    var img = card.querySelector('.mytube-thumb-img');
+    var img = card.querySelector('.silenttube-thumb-img');
     if (img && meta.thumb) {
       delete img.dataset.fallback;
       img.src = meta.thumb;
     }
-    var duration = card.querySelector('.mytube-duration');
+    var duration = card.querySelector('.silenttube-duration');
     if (duration) duration.textContent = M.formatDuration(meta.duration);
-    var title = card.querySelector('.mytube-title');
+    var title = card.querySelector('.silenttube-title');
     if (title) title.textContent = M.normalizeVideoTitle(meta.title || '');
-    var byline = card.querySelector('.mytube-byline');
+    var byline = card.querySelector('.silenttube-byline');
     if (byline) byline.textContent = meta.author || '';
-    var avatar = card.querySelector('.mytube-avatar');
+    var avatar = card.querySelector('.silenttube-avatar');
     if (avatar) applyAvatar(avatar, meta);
-    var views = card.querySelector('.mytube-views');
+    var views = card.querySelector('.silenttube-views');
     if (views) {
       views.textContent = M.formatCompactViews(meta.views);
       views.title = M.formatViews(meta.views);
     }
-    var date = card.querySelector('.mytube-date');
+    var date = card.querySelector('.silenttube-date');
     if (date) date.textContent = M.formatCompactDate(meta.published);
   }
 
   function refreshRenderedCards() {
-    if (!document.getElementById('mytube-feed')) return;
+    if (!document.getElementById('silenttube-feed')) return;
     state.settings.videos.forEach(updateCard);
   }
 
@@ -751,13 +751,13 @@
       for (var i = 0; i < leaves.length; i++) {
         var leaf = leaves[i];
         if (leaf.childElementCount) continue;
-        if (leaf.classList.contains('mytube-tag-views') || leaf.classList.contains('mytube-tag-date')) continue;
+        if (leaf.classList.contains('silenttube-tag-views') || leaf.classList.contains('silenttube-tag-date')) continue;
 
         var text = (leaf.textContent || '').trim();
         if (!text || text.length > 40) continue;
 
-        if (VIEW_RE.test(text)) leaf.classList.add('mytube-tag-views');
-        else if (DATE_RE.test(text)) leaf.classList.add('mytube-tag-date');
+        if (VIEW_RE.test(text)) leaf.classList.add('silenttube-tag-views');
+        else if (DATE_RE.test(text)) leaf.classList.add('silenttube-tag-date');
       }
     }
   }
@@ -792,13 +792,13 @@
         if (!text) continue;
 
         if (VIEW_RE.test(text)) {
-          el.classList.add('mytube-tag-views');
+          el.classList.add('silenttube-tag-views');
           tagSeparators(el, 'views');
         } else if (DATE_RE.test(text)) {
-          el.classList.add('mytube-tag-date');
+          el.classList.add('silenttube-tag-date');
           tagSeparators(el, 'date');
         } else if (!sawChannel) {
-          el.classList.add('mytube-tag-channel');
+          el.classList.add('silenttube-tag-channel');
           sawChannel = true;
           tagChannelIcon(el);
         }
@@ -807,10 +807,10 @@
 
     for (var j = 0; j < rows.length; j++) {
       if (
-        !rows[j].querySelector('.mytube-tag-channel') &&
-        rows[j].querySelector('.mytube-tag-views, .mytube-tag-date')
+        !rows[j].querySelector('.silenttube-tag-channel') &&
+        rows[j].querySelector('.silenttube-tag-views, .silenttube-tag-date')
       ) {
-        rows[j].classList.add('mytube-tag-extra-row');
+        rows[j].classList.add('silenttube-tag-extra-row');
       }
     }
   }
@@ -824,17 +824,17 @@
       (prev.classList.contains('ytContentMetadataViewModelDelimiter') ||
         prev.classList.contains('ytIconWrapperHost'))
     ) {
-      prev.classList.add('mytube-delim-' + kind);
+      prev.classList.add('silenttube-delim-' + kind);
     }
     if (next && next.classList.contains('ytContentMetadataViewModelDelimiter')) {
-      next.classList.add('mytube-delim-' + kind);
+      next.classList.add('silenttube-delim-' + kind);
     }
   }
 
   function tagChannelIcon(el) {
     var next = el.nextElementSibling;
     while (next && next.classList.contains('ytIconWrapperHost')) {
-      next.classList.add('mytube-delim-channel');
+      next.classList.add('silenttube-delim-channel');
       next = next.nextElementSibling;
     }
   }

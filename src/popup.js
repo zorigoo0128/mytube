@@ -1,8 +1,8 @@
 (function () {
   'use strict';
 
-  var M = globalThis.MyTube;
-  var B = globalThis.MyTubeBrowser || globalThis.chrome;
+  var M = globalThis.SilentTube;
+  var B = globalThis.SilentTubeBrowser || globalThis.chrome;
   var state = {
     settings: M.normalizeSettings(null),
     meta: {},
@@ -563,7 +563,7 @@
       ]);
 
       var payload = {
-        format: 'mytube-backup',
+        format: 'silenttube-backup',
         version: 1,
         exportedAt: new Date().toISOString(),
         sync: { [M.SETTINGS_KEY]: sync[M.SETTINGS_KEY] },
@@ -577,7 +577,7 @@
       var url = URL.createObjectURL(blob);
       var link = document.createElement('a');
       link.href = url;
-      link.download = 'mytube-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+      link.download = 'silenttube-backup-' + new Date().toISOString().slice(0, 10) + '.json';
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -602,11 +602,11 @@
       try {
         payload = JSON.parse(await file.text());
       } catch (error) {
-        throw new Error('That is not a MyTube backup file.');
+        throw new Error('That is not a SilentTube backup file.');
       }
 
       var backup = M.normalizeBackup(payload);
-      if (!backup) throw new Error('That is not a MyTube backup file.');
+      if (!backup) throw new Error('That is not a SilentTube backup file.');
 
       await B.storage.sync.set({ [M.SETTINGS_KEY]: backup.settings });
       if (backup.meta) await B.storage.local.set({ [M.META_KEY]: backup.meta });

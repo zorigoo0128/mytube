@@ -2,12 +2,12 @@
  * Hand-picked home feed
  * ------------------------------------------------------------------ */
 
-#mytube-feed {
+#silenttube-feed {
   display: grid;
-  grid-template-columns: repeat(auto-fill, var(--mytube-card-size, 272px));
+  grid-template-columns: repeat(auto-fill, var(--silenttube-card-size, 272px));
   justify-content: center;
-  column-gap: var(--mytube-card-gap, 16px);
-  row-gap: var(--mytube-card-gap, 16px);
+  column-gap: var(--silenttube-card-gap, 16px);
+  row-gap: var(--silenttube-card-gap, 16px);
   width: 100%;
   max-width: 2400px;
   margin: 0 auto;
@@ -17,7 +17,7 @@
   color: var(--yt-sys-color-baseline--text-primary, var(--yt-spec-text-primary, #0f0f0f));
 }
 
-#mytube-feed .mytube-card {
+#silenttube-feed .silenttube-card {
   display: block;
   min-width: 0;
   padding: 8px;
@@ -29,38 +29,38 @@
 }
 
 @media (hover: hover) {
-  #mytube-feed .mytube-card:hover {
+  #silenttube-feed .silenttube-card:hover {
     background-color: color-mix(in srgb, currentColor 10%, transparent);
   }
 }
 
-#mytube-feed .mytube-card:focus-visible {
+#silenttube-feed .silenttube-card:focus-visible {
   outline: 2px solid var(--yt-sys-color-baseline--call-to-action, var(--yt-spec-call-to-action, #065fd4));
   outline-offset: 2px;
 }
 
-#mytube-feed .mytube-thumb {
+#silenttube-feed .silenttube-thumb {
   position: relative;
   aspect-ratio: 16 / 9;
-  border-radius: var(--mytube-thumb-radius, 12px);
+  border-radius: var(--silenttube-thumb-radius, 12px);
   overflow: hidden;
   background-color: rgba(128, 128, 128, 0.22);
 }
 
 /* Apply the same corner radius to YouTube's own video thumbnails. */
 :is(yt-thumbnail-view-model, ytd-thumbnail, #thumbnail) {
-  border-radius: var(--mytube-thumb-radius, 12px) !important;
+  border-radius: var(--silenttube-thumb-radius, 12px) !important;
   overflow: hidden !important;
 }
 
-#mytube-feed .mytube-thumb-img {
+#silenttube-feed .silenttube-thumb-img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-#mytube-feed .mytube-duration {
+#silenttube-feed .silenttube-duration {
   position: absolute;
   right: 8px;
   bottom: 8px;
@@ -74,18 +74,18 @@
   letter-spacing: 0.2px;
 }
 
-#mytube-feed .mytube-duration:empty {
+#silenttube-feed .silenttube-duration:empty {
   display: none;
 }
 
-#mytube-feed .mytube-info {
+#silenttube-feed .silenttube-info {
   display: flex;
   align-items: flex-start;
   gap: 8px;
   margin-top: 12px;
 }
 
-#mytube-feed .mytube-avatar {
+#silenttube-feed .silenttube-avatar {
   flex: 0 0 auto;
   width: 36px;
   height: 36px;
@@ -101,19 +101,19 @@
   user-select: none;
 }
 
-#mytube-feed .mytube-avatar-img {
+#silenttube-feed .silenttube-avatar-img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-#mytube-feed .mytube-texts {
+#silenttube-feed .silenttube-texts {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-#mytube-feed .mytube-title {
+#silenttube-feed .silenttube-title {
   margin: 0;
   font-size: 16px;
   font-weight: 500;
@@ -126,7 +126,7 @@
   overflow-wrap: anywhere;
 }
 
-#mytube-feed .mytube-title:empty::before {
+#silenttube-feed .silenttube-title:empty::before {
   content: "";
   display: block;
   width: 85%;
@@ -134,17 +134,17 @@
   margin: 3px 0;
   border-radius: 4px;
   background-color: rgba(128, 128, 128, 0.22);
-  animation: mytube-pulse 1.2s ease-in-out infinite;
+  animation: silenttube-pulse 1.2s ease-in-out infinite;
 }
 
-#mytube-feed .mytube-byline {
+#silenttube-feed .silenttube-byline {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-#mytube-feed .mytube-meta {
+#silenttube-feed .silenttube-meta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -154,12 +154,12 @@
   color: var(--yt-sys-color-baseline--text-secondary, var(--yt-spec-text-secondary, #606060));
 }
 
-#mytube-feed .mytube-meta > span + span::before {
+#silenttube-feed .silenttube-meta > span + span::before {
   content: "\2022";
   margin: 0 4px;
 }
 
-@keyframes mytube-pulse {
+@keyframes silenttube-pulse {
   0%,
   100% {
     opacity: 0.55;
@@ -169,40 +169,40 @@
   }
 }
 
-html.mytube-hide-channel #mytube-feed .mytube-avatar,
-html.mytube-hide-channel #mytube-feed .mytube-byline {
+html.silenttube-hide-channel #silenttube-feed .silenttube-avatar,
+html.silenttube-hide-channel #silenttube-feed .silenttube-byline {
   display: none !important;
 }
 
-html.mytube-hide-channel #mytube-feed .mytube-views::before {
+html.silenttube-hide-channel #silenttube-feed .silenttube-views::before {
   content: none !important;
 }
 
-html.mytube-hide-views #mytube-feed .mytube-date::before {
+html.silenttube-hide-views #silenttube-feed .silenttube-date::before {
   content: none !important;
 }
 
-html.mytube-hide-views #mytube-feed .mytube-views {
+html.silenttube-hide-views #silenttube-feed .silenttube-views {
   display: none !important;
 }
 
-html.mytube-hide-posted #mytube-feed .mytube-date {
+html.silenttube-hide-posted #silenttube-feed .silenttube-date {
   display: none !important;
 }
 
-html.mytube-hide-channel.mytube-hide-views.mytube-hide-posted #mytube-feed .mytube-meta {
+html.silenttube-hide-channel.silenttube-hide-views.silenttube-hide-posted #silenttube-feed .silenttube-meta {
   display: none !important;
 }
 
-#mytube-feed .mytube-meta > span:empty {
+#silenttube-feed .silenttube-meta > span:empty {
   display: none;
 }
 
 /* While the custom feed is active, the algorithmic home feed is not rendered. */
-html.mytube-custom-home ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
-html.mytube-custom-home ytd-browse[page-subtype="home"] ytd-rich-section-renderer,
-html.mytube-custom-home ytd-browse[page-subtype="home"] ytd-feed-filter-chip-bar-renderer,
-html.mytube-custom-home ytd-browse[page-subtype="home"] ytd-continuation-item-renderer {
+html.silenttube-custom-home ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html.silenttube-custom-home ytd-browse[page-subtype="home"] ytd-rich-section-renderer,
+html.silenttube-custom-home ytd-browse[page-subtype="home"] ytd-feed-filter-chip-bar-renderer,
+html.silenttube-custom-home ytd-browse[page-subtype="home"] ytd-continuation-item-renderer {
   display: none !important;
 }
 
@@ -221,7 +221,7 @@ html.mytube-custom-home ytd-browse[page-subtype="home"] ytd-continuation-item-re
 }
 
 /* Replace the YouTube logo with editable text. */
-html:not(.mytube-hide-topbar) ytd-masthead :is(
+html:not(.silenttube-hide-topbar) ytd-masthead :is(
   #logo,
   ytd-topbar-logo-renderer,
   ytd-logo,
@@ -230,7 +230,7 @@ html:not(.mytube-hide-topbar) ytd-masthead :is(
   display: none !important;
 }
 
-.mytube-brand-text {
+.silenttube-brand-text {
   display: inline-flex;
   align-items: center;
   flex: 0 0 auto;
@@ -250,7 +250,7 @@ html:not(.mytube-hide-topbar) ytd-masthead :is(
   white-space: nowrap;
 }
 
-.mytube-brand-text:focus-visible {
+.silenttube-brand-text:focus-visible {
   border-radius: 4px;
   outline: 2px solid var(--yt-sys-color-baseline--call-to-action, var(--yt-spec-call-to-action, #065fd4));
   outline-offset: 2px;
@@ -258,12 +258,12 @@ html:not(.mytube-hide-topbar) ytd-masthead :is(
 
 /* Remove the whole right-side control group: Create, Notifications, profile,
    settings, and sign-in all live under #end. */
-html:not(.mytube-hide-topbar) ytd-masthead #end {
+html:not(.silenttube-hide-topbar) ytd-masthead #end {
   display: none !important;
 }
 
 /* Remove the voice-search microphone. */
-html:not(.mytube-hide-topbar) ytd-masthead :is(
+html:not(.silenttube-hide-topbar) ytd-masthead :is(
   #voice-search-button,
   ytd-voice-search-button,
   yt-voice-search-button
@@ -272,7 +272,7 @@ html:not(.mytube-hide-topbar) ytd-masthead :is(
 }
 
 /* Put the search box on the right at half its previous width. */
-html:not(.mytube-hide-topbar) ytd-masthead #center {
+html:not(.silenttube-hide-topbar) ytd-masthead #center {
   flex: 0 0 auto !important;
   justify-content: flex-end !important;
   margin-left: auto !important;
@@ -280,7 +280,7 @@ html:not(.mytube-hide-topbar) ytd-masthead #center {
   padding: 0 !important;
 }
 
-html:not(.mytube-hide-topbar) ytd-masthead #center :is(
+html:not(.silenttube-hide-topbar) ytd-masthead #center :is(
   yt-searchbox,
   ytd-searchbox,
   #search-form,
@@ -292,7 +292,7 @@ html:not(.mytube-hide-topbar) ytd-masthead #center :is(
   box-sizing: border-box !important;
 }
 
-html:not(.mytube-hide-topbar) ytd-masthead #center yt-searchbox :is(
+html:not(.silenttube-hide-topbar) ytd-masthead #center yt-searchbox :is(
   .ytSearchboxComponentInputWrapper,
   .ytSearchboxComponentInputContainer,
   .ytSearchboxComponentSearchForm
@@ -302,7 +302,7 @@ html:not(.mytube-hide-topbar) ytd-masthead #center yt-searchbox :is(
 }
 
 /* Remove the magnifier button from the search box. Enter still searches. */
-html:not(.mytube-hide-topbar) ytd-masthead :is(
+html:not(.silenttube-hide-topbar) ytd-masthead :is(
   #search-icon-legacy,
   #search-button,
   .ytSearchboxComponentSearchButton
@@ -312,7 +312,7 @@ html:not(.mytube-hide-topbar) ytd-masthead :is(
 
 /* The search field is borderless and completely transparent, including
    hover and focus states. */
-html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox :is(
+html:not(.silenttube-hide-topbar) ytd-masthead yt-searchbox :is(
   .ytSearchboxComponentInputBox,
   .ytSearchboxComponentInputBoxDark,
   .ytSearchboxComponentInputBox:hover,
@@ -330,7 +330,7 @@ html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox :is(
   outline: none !important;
 }
 
-html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentInput {
+html:not(.silenttube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentInput {
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -340,15 +340,15 @@ html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentInp
 /* The focus magnifier lives inside the form. Keep it on the left and move the
    input text past it instead of letting the icon sit over the placeholder. The
    input keeps its full clickable width. */
-html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentSearchForm:has(.ytSearchboxComponentInnerSearchIcon) .ytSearchboxComponentInput {
+html:not(.silenttube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentSearchForm:has(.ytSearchboxComponentInnerSearchIcon) .ytSearchboxComponentInput {
   padding-left: 32px !important;
 }
 
-html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentInnerSearchIcon {
+html:not(.silenttube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentInnerSearchIcon {
   pointer-events: none !important;
 }
 
-html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentSearchForm .ytSearchboxComponentInput {
+html:not(.silenttube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentSearchForm .ytSearchboxComponentInput {
   width: 100% !important;
   min-width: 0 !important;
   box-sizing: border-box !important;
@@ -358,53 +358,53 @@ html:not(.mytube-hide-topbar) ytd-masthead yt-searchbox .ytSearchboxComponentSea
  * Global style
  * ------------------------------------------------------------------ */
 
-html.mytube-custom-font,
-html.mytube-custom-font * {
-  font-family: var(--mytube-font-family) !important;
+html.silenttube-custom-font,
+html.silenttube-custom-font * {
+  font-family: var(--silenttube-font-family) !important;
 }
 
-html.mytube-custom-font-size,
-html.mytube-custom-font-size * {
-  font-size: var(--mytube-font-size) !important;
+html.silenttube-custom-font-size,
+html.silenttube-custom-font-size * {
+  font-size: var(--silenttube-font-size) !important;
 }
 
-html.mytube-custom-text-color,
-html.mytube-custom-text-color * {
-  color: var(--mytube-text-color) !important;
+html.silenttube-custom-text-color,
+html.silenttube-custom-text-color * {
+  color: var(--silenttube-text-color) !important;
 }
 
-html.mytube-has-filter body::after {
+html.silenttube-has-filter body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
   background-color: transparent;
-  -webkit-backdrop-filter: var(--mytube-css-filter);
-  backdrop-filter: var(--mytube-css-filter);
+  -webkit-backdrop-filter: var(--silenttube-css-filter);
+  backdrop-filter: var(--silenttube-css-filter);
 }
 
-html.mytube-has-background {
+html.silenttube-has-background {
   background-color: #000 !important;
   background-image:
-    linear-gradient(var(--mytube-bg-dim, rgba(0, 0, 0, 0.5)), var(--mytube-bg-dim, rgba(0, 0, 0, 0.5))),
-    var(--mytube-bg-image, none) !important;
+    linear-gradient(var(--silenttube-bg-dim, rgba(0, 0, 0, 0.5)), var(--silenttube-bg-dim, rgba(0, 0, 0, 0.5))),
+    var(--silenttube-bg-image, none) !important;
   background-position: center, center !important;
   background-size: cover, cover !important;
   background-repeat: no-repeat, no-repeat !important;
   background-attachment: fixed, fixed !important;
 }
 
-html.mytube-has-background body {
+html.silenttube-has-background body {
   background: transparent !important;
 }
 
-html.mytube-has-background ytd-app,
-html.mytube-has-background #content.ytd-app,
-html.mytube-has-background #page-manager,
-html.mytube-has-background #primary,
-html.mytube-has-background #secondary,
-html.mytube-has-background :is(ytd-browse, ytd-watch-flexy, ytd-search, ytd-channel-renderer) {
+html.silenttube-has-background ytd-app,
+html.silenttube-has-background #content.ytd-app,
+html.silenttube-has-background #page-manager,
+html.silenttube-has-background #primary,
+html.silenttube-has-background #secondary,
+html.silenttube-has-background :is(ytd-browse, ytd-watch-flexy, ytd-search, ytd-channel-renderer) {
   background-color: transparent !important;
 }
 
@@ -450,7 +450,7 @@ ytd-watch-flexy #secondary-inner {
 #related ytd-item-section-renderer #contents {
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: var(--mytube-card-gap, 16px) !important;
+  gap: var(--silenttube-card-gap, 16px) !important;
 }
 
 #related ytd-item-section-renderer #contents > * {
@@ -461,14 +461,14 @@ ytd-watch-flexy #secondary-inner {
 
 /* Full-page dim on watch pages. Four fixed panes surround the player, so the
    player stays visible and interactive while everything else is dimmed. */
-.mytube-watch-dim {
+.silenttube-watch-dim {
   position: fixed;
   inset: 0;
   z-index: 2147483000;
   pointer-events: none;
 }
 
-.mytube-watch-dim-pane {
+.silenttube-watch-dim-pane {
   position: fixed;
   margin: 0;
   padding: 0;
@@ -478,7 +478,7 @@ ytd-watch-flexy #secondary-inner {
   cursor: pointer;
 }
 
-.mytube-watch-dim:focus-visible .mytube-watch-dim-pane {
+.silenttube-watch-dim:focus-visible .silenttube-watch-dim-pane {
   outline: 2px solid var(--yt-sys-color-baseline--call-to-action, var(--yt-spec-call-to-action, #065fd4));
   outline-offset: -4px;
 }
@@ -504,20 +504,20 @@ ytd-watch-flexy #secondary-inner {
  * ------------------------------------------------------------------ */
 
 /* Comments */
-html.mytube-hide-comments :is(ytd-comments, ytd-comments-header-renderer, #comments) {
+html.silenttube-hide-comments :is(ytd-comments, ytd-comments-header-renderer, #comments) {
   display: none !important;
 }
 
 /* Watch-page metadata rows */
-html.mytube-hide-watch-top-row ytd-watch-metadata #top-row,
-html.mytube-hide-watch-middle-row ytd-watch-metadata #middle-row,
-html.mytube-hide-watch-bottom-row ytd-watch-metadata #bottom-row,
-html.mytube-hide-watch-bottom-row ytd-watch-metadata #buttom-row {
+html.silenttube-hide-watch-top-row ytd-watch-metadata #top-row,
+html.silenttube-hide-watch-middle-row ytd-watch-metadata #middle-row,
+html.silenttube-hide-watch-bottom-row ytd-watch-metadata #bottom-row,
+html.silenttube-hide-watch-bottom-row ytd-watch-metadata #buttom-row {
   display: none !important;
 }
 
 /* Shorts */
-html.mytube-hide-shorts :is(
+html.silenttube-hide-shorts :is(
   ytd-reel-shelf-renderer,
   ytd-rich-shelf-renderer[is-shorts],
   ytd-reel-item-renderer,
@@ -547,7 +547,7 @@ html.mytube-hide-shorts :is(
 }
 
 /* Filter chips under the search bar */
-html.mytube-hide-chips :is(
+html.silenttube-hide-chips :is(
   ytd-feed-filter-chip-bar-renderer,
   ytd-chip-cloud-renderer,
   yt-chip-cloud-renderer,
@@ -559,51 +559,51 @@ html.mytube-hide-chips :is(
 }
 
 /* Left sidebar */
-html.mytube-hide-sidebar :is(ytd-guide-renderer, #guide, ytd-mini-guide-renderer) {
+html.silenttube-hide-sidebar :is(ytd-guide-renderer, #guide, ytd-mini-guide-renderer) {
   display: none !important;
 }
 
-html.mytube-hide-sidebar ytd-masthead #guide-button {
+html.silenttube-hide-sidebar ytd-masthead #guide-button {
   display: none !important;
 }
 
-html.mytube-hide-sidebar ytd-app {
+html.silenttube-hide-sidebar ytd-app {
   --ytd-guide-width: 0px !important;
   --ytd-mini-guide-width: 0px !important;
 }
 
-html.mytube-hide-sidebar #page-manager,
-html.mytube-hide-sidebar #content.ytd-app {
+html.silenttube-hide-sidebar #page-manager,
+html.silenttube-hide-sidebar #content.ytd-app {
   margin-left: 0 !important;
   padding-left: 0 !important;
 }
 
 /* Top bar */
-html.mytube-hide-topbar :is(ytd-masthead, #masthead-container, #masthead) {
+html.silenttube-hide-topbar :is(ytd-masthead, #masthead-container, #masthead) {
   display: none !important;
 }
 
-html.mytube-hide-topbar ytd-app {
+html.silenttube-hide-topbar ytd-app {
   --ytd-masthead-height: 0px !important;
 }
 
-html.mytube-hide-topbar #page-manager {
+html.silenttube-hide-topbar #page-manager {
   margin-top: 0 !important;
   top: 0 !important;
 }
 
 /* The frosted header backdrop is sized for masthead + filter chips. */
-html.mytube-hide-topbar #frosted-glass {
+html.silenttube-hide-topbar #frosted-glass {
   display: none !important;
 }
 
-html.mytube-custom-home #frosted-glass,
-html.mytube-hide-chips #frosted-glass {
+html.silenttube-custom-home #frosted-glass,
+html.silenttube-hide-chips #frosted-glass {
   height: var(--ytd-masthead-height, 56px) !important;
 }
 
 /* Channel name and avatar on YouTube's own video cards */
-html.mytube-hide-channel
+html.silenttube-hide-channel
   :is(
     ytd-rich-item-renderer,
     ytd-video-renderer,
@@ -626,28 +626,28 @@ html.mytube-hide-channel
   display: none !important;
 }
 
-html.mytube-hide-channel :is(.mytube-tag-channel, .mytube-delim-channel) {
+html.silenttube-hide-channel :is(.silenttube-tag-channel, .silenttube-delim-channel) {
   display: none !important;
 }
 
 /* Channel name and avatar on the watch page (keeps the subscribe button) */
-html.mytube-hide-channel ytd-watch-metadata #owner :is(#avatar, ytd-channel-name, #channel-name) {
+html.silenttube-hide-channel ytd-watch-metadata #owner :is(#avatar, ytd-channel-name, #channel-name) {
   display: none !important;
 }
 
 /* View count and posted date, tagged by content.js on YouTube's own surfaces */
-html.mytube-hide-views :is(.mytube-tag-views, .mytube-delim-views, #view-count) {
+html.silenttube-hide-views :is(.silenttube-tag-views, .silenttube-delim-views, #view-count) {
   display: none !important;
 }
 
-html.mytube-hide-posted :is(.mytube-tag-date, .mytube-delim-date) {
+html.silenttube-hide-posted :is(.silenttube-tag-date, .silenttube-delim-date) {
   display: none !important;
 }
 
-html.mytube-hide-posted ytd-watch-info-text #date-text {
+html.silenttube-hide-posted ytd-watch-info-text #date-text {
   display: none !important;
 }
 
-html.mytube-hide-views.mytube-hide-posted .mytube-tag-extra-row {
+html.silenttube-hide-views.silenttube-hide-posted .silenttube-tag-extra-row {
   display: none !important;
 }
