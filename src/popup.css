@@ -50,11 +50,18 @@ body {
   margin: 0;
 }
 
+/* A transparent html keeps body's background from spreading to the canvas, so the rounded corners show. */
+html {
+  background: transparent;
+}
+
 body {
   width: 360px;
   max-height: 580px;
   overflow-y: auto;
   overflow-x: hidden;
+  border: 1px solid var(--glass-edge);
+  border-radius: 24px;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
   background:
@@ -608,6 +615,8 @@ body.tab-view {
   width: auto;
   max-height: none;
   overflow: visible;
+  border: 0;
+  border-radius: 0;
 }
 
 body.tab-view .header,
