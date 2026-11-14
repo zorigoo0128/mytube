@@ -251,9 +251,12 @@
     }
     if (theater.attempts >= 3 || Date.now() - theater.lastClickAt < 1500) return;
 
+    /* Find the control by class. Its aria-label is localized, so matching it
+       would limit theater mode to one UI language. The theater attribute
+       checked above confirms whether the click worked, and the 1.5 s gap
+       between attempts keeps a useless click from toggling twice. */
     var button = document.querySelector('.ytp-size-button');
-    var label = button ? button.getAttribute('aria-label') || '' : '';
-    if (!button || !/^Theater mode/i.test(label)) return;
+    if (!button) return;
 
     theater.attempts++;
     theater.lastClickAt = Date.now();

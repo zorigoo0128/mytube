@@ -88,6 +88,9 @@
   var backgroundDimColorInput = document.getElementById('background-dim-color-input');
   var pageNote = document.getElementById('page-note');
   var runningInTab = false;
+  var saveTimer = null;
+
+  var SAVE_DELAY_MS = 250;
 
   var SECTION_BY_HASH = {
     videos: 'section-videos',
@@ -139,6 +142,14 @@
       state.settings.brandText = brandInput.value.slice(0, 40);
       save();
     });
+
+    /* Flush on the way out so a pending write is never lost when the popup
+       or settings tab closes. */
+    document.addEventListener('focusout', flushSave, true);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') flushSave();
+    });
+    window.addEventListener('pagehide', flushSave);
 
     NUMBER_INPUTS.forEach(function (item) {
       var node = document.getElementById(item.id);
@@ -627,7 +638,24 @@
     errorNode.textContent = '';
   }
 
+  /* sync storage allows only 120 writes per minute, and every input event
+     fires a change. Coalesce them; flushSave writes immediately. */
   function save() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      saveTimer = null;
+      writeSettings();
+    }, SAVE_DELAY_MS);
+  }
+
+  function flushSave() {
+    if (!saveTimer) return;
+    clearTimeout(saveTimer);
+    saveTimer = null;
+    writeSettings();
+  }
+
+  function writeSettings() {
     B.storage.sync.set({ [M.SETTINGS_KEY]: state.settings }).catch(function () {
       showError('Could not save. Check browser sync storage.');
     });
